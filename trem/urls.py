@@ -16,9 +16,12 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
+from django.urls.resolvers import URLResolver
+from .api import api
 
-urlpatterns = [
+urlpatterns: list[URLResolver] = [
     path("admin/", admin.site.urls),
-    path("", include("trem_app.urls")),
+    # path("", include("trem_app.urls")),
+    path("api/", api.urls),
 ]

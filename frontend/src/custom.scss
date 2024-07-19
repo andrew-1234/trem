@@ -1,0 +1,56 @@
+@import "../node_modules/bootstrap/scss/functions";
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/mixins";
+
+$primary: #5938df;
+$primary-bg-subtle: #e7fafa;
+
+$theme-colors: map-merge($theme-colors, (
+  "primary": $primary 
+));
+
+// Define custom utility class
+// .bg-body-primary {
+//   background-color: $primary !important;
+// }
+
+.container {
+  margin-top: 20px;
+ }
+ .row {
+   row-gap: 20px;
+ }
+
+ .form-group {
+  margin-bottom: 20px;
+}
+
+form{
+  height: auto;
+  width: 600px;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: $primary 0px 3px 8px;
+  margin: 100px auto;
+}
+
+// Notes
+
+.note-metadata {
+  display: flex;
+  justify-content: start;
+  align-items: start;
+  margin-top: 0px;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.note-content {
+  margin-top: 10px;
+  padding: 20px;
+  border-radius: 10px;
+  border-color: $primary;
+}
+
+@import "../node_modules/bootstrap/scss/bootstrap.scss"
