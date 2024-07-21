@@ -4,24 +4,33 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Notes',
+            name="Notes",
             fields=[
-                ('title', models.CharField(max_length=200)),
-                ('content', models.TextField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('category', models.CharField(choices=[('GENERAL', 'General'), ('PERSONAL', 'Personal'), ('OTHER', 'Other')], default='GENERAL', max_length=100)),
-                ('tags', models.CharField(max_length=200)),
-                ('slug', models.SlugField(max_length=200, unique=True)),
-                ('id', models.AutoField(primary_key=True, serialize=False)),
+                ("title", models.CharField(max_length=200)),
+                ("content", models.TextField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "category",
+                    models.CharField(
+                        choices=[
+                            ("GENERAL", "General"),
+                            ("PERSONAL", "Personal"),
+                            ("OTHER", "Other"),
+                        ],
+                        default="GENERAL",
+                        max_length=100,
+                    ),
+                ),
+                ("tags", models.CharField(max_length=200)),
+                ("slug", models.SlugField(max_length=200, unique=True)),
+                ("id", models.AutoField(primary_key=True, serialize=False)),
             ],
         ),
     ]

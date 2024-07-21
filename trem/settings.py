@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import django_stubs_ext
+
+django_stubs_ext.monkeypatch()  # type: ignore
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,11 +43,13 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "trem_app",
     "rest_framework",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -53,7 +59,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "trem.urls"
 
-TEMPLATES = [
+TEMPLATES = [  # type: ignore
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [],
@@ -71,7 +77,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "trem.wsgi.application"
 
-
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:5174",
+]
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 

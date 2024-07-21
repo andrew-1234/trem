@@ -2,6 +2,7 @@
 @import "../node_modules/bootstrap/scss/variables";
 @import "../node_modules/bootstrap/scss/mixins";
 
+// Define custom theme overrides
 $primary: #5938df;
 $primary-bg-subtle: #e7fafa;
 
@@ -9,22 +10,25 @@ $theme-colors: map-merge($theme-colors, (
   "primary": $primary 
 ));
 
-// Define custom utility class
+// Define custom utility class syntax example:
 // .bg-body-primary {
 //   background-color: $primary !important;
 // }
 
+//  General styling
 .container {
   margin-top: 20px;
  }
+ 
  .row {
    row-gap: 20px;
  }
-
+ 
  .form-group {
   margin-bottom: 20px;
 }
 
+// Custom form styling
 form{
   height: auto;
   width: 600px;
@@ -34,8 +38,7 @@ form{
   margin: 100px auto;
 }
 
-// Notes
-
+// 'Note' related styling
 .note-metadata {
   display: flex;
   justify-content: start;

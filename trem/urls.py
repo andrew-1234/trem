@@ -22,6 +22,5 @@ from .api import api
 
 urlpatterns: list[URLResolver] = [
     path("admin/", admin.site.urls),
-    # path("", include("trem_app.urls")),
     path("api/", api.urls),
 ]

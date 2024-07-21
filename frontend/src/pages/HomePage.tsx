@@ -1,8 +1,11 @@
+import { useEffect } from 'react'
 import Filter from '../components/Filter'
 import NoteCardContainer from '../components/NoteCardContainer'
-type Props = {}
 
-const HomePage = (props: Props) => {
+const HomePage = () => {
+  useEffect(() => {
+    document.title = 'Home'
+  })
   return (
     <>
       <Filter />

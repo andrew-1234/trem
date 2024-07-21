@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Note
 
 
-class NoteAdmin(admin.ModelAdmin):
+class NoteAdmin(admin.ModelAdmin[Note]):
     # List of fields to display in the list view
     list_display = (
         "id",
@@ -11,7 +11,6 @@ class NoteAdmin(admin.ModelAdmin):
         "created_at",
         "updated_at",
         "tags",
-        "category",
         "slug",
     )
     list_display_links = ("title",)

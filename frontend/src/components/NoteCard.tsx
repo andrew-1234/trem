@@ -1,27 +1,44 @@
-import { FaNoteSticky } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-type NoteCardProps = { color?: string };
+import { Note } from '../constants/noteType';
+import { ROUTES } from '../constants/routes';
 
-const NoteCard = ({ color = "green" }: NoteCardProps) => {
+type NoteCardProps = {
+  note: Note;
+  color?: string;
+};
+
+const NoteCard = ({ note, color = "magenta" }: NoteCardProps) => {
+  const tagsArray = note.tags.split(/[, ]+/).map(tag => tag.trim()).filter(tag => tag.length > 0);
   return (
-    <div className="col-md-4 single-note-item">
+
+    <div className="single-note-item">
       <div className="card card-body">
-        <FaNoteSticky style={{ marginLeft: "auto", color: color }} />
-        <Link to="/note-info" style={{
-        }}>
-          <h5 className="note-title text-truncate w-75" data-note-title="Placeholder">Ghost in the Shell</h5>
+
+        {/* Link to the Note's Page */}
+        <Link to={ROUTES.NOTE_INFO(note.id.toString())} style={{ textDecoration: 'none' }}>
+          <h5 className="note-title text-truncate w-75" data-note-title={note.title}>{note.title}</h5>
         </Link>
-        <h6 className="card-subtitle mb-0 text-muted fs-6">18 July 2024</h6>
-        <p className="card-text" data-card-text="Placeholder">
-          Alice was beginning to get very tired of sitting by her sister on the
-          bank, and of having nothing to do. Once or twice she had peeped into
-          the book her sister was reading, but it had no pictures or
-          conversations in it, “and what is the use of a book,” thought Alice,
-          “without pictures or conversations?”
-        </p>
-        <p>hello</p>
+
+        {/* Note Metadata: Date Created */}
+        <h6 className="mb-2 text-black text-opacity-50">{new Date(note.created_at).toLocaleString()}</h6>
+
+        {/* Note Metadata: Tags */}
+        <div className="tags mb-2">
+          {tagsArray.map((tag, index) => (
+            <span key={index} className="badge bg-primary me-1">
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        {/* Note Contents */}
+        <div className="card-text text-truncate" data-card-text={note.content}>
+          {note.content}
+        </div>
       </div>
     </div >
+
   )
 }
+
 export default NoteCard
