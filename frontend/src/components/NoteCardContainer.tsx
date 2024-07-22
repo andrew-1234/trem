@@ -63,6 +63,7 @@ const NoteCardContainer = (props: NoteCardContainerProps) => {
   return (
     <div className="container">
       <div className="pagination-sm" >
+        <HomePagination pageCount={page_count} onPageChange={setPage} currentPage={page} />
         <div className="row">
           {/* {notes.map(note => (
             <div key={note.id} className="list">
@@ -79,8 +80,6 @@ const NoteCardContainer = (props: NoteCardContainerProps) => {
               </div>
             ))
           )}
-          <p>hello</p>
-          <HomePagination pageCount={page_count} onPageChange={setPage} currentPage={page} />
         </div>
       </div>
     </div>

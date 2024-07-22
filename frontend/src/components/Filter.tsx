@@ -5,8 +5,12 @@ const Filter = () => {
         <option value="" disabled>Filter by tags:</option>
       </select>
     </div>
-    // <p>hello world</p>
   )
 }
 
 export default Filter;
+
+// API call to get all tags from the database
+// Sort the tags alphabetically
+// Display the tags in the dropdown menu
+

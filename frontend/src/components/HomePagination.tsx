@@ -12,8 +12,9 @@ export const HomePagination = (props: PaginationProps) => {
   }
 
   return (
-    <nav className="pagination-container">
+    <nav className="pagination-container justify-content-end ">
       <button
+        className="btn btn-pagination btn-first-last"
         onClick={() => props.onPageChange(1)}
         disabled={props.currentPage === 0}
       >
@@ -23,7 +24,7 @@ export const HomePagination = (props: PaginationProps) => {
         <button
           key={number}
           onClick={() => props.onPageChange(number)}
-          className={`page-item ${props.currentPage === number ? 'active' : ''}`}
+          className={`btn btn-pagination ${props.currentPage === number ? 'active' : ''}`}
         >
           {number}
         </button>
@@ -31,6 +32,7 @@ export const HomePagination = (props: PaginationProps) => {
       <button
         onClick={() => props.onPageChange(props.pageCount)}
         disabled={props.currentPage === props.pageCount}
+        className="btn btn-pagination btn-first-last"
       >
         Last
       </button>
