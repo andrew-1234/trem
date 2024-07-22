@@ -1,6 +1,6 @@
 import { FaSquarePlus } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-import { ROUTES } from "../constants/routes";
+import { noteRoutes } from "../constants/NoteRoutes";
 const NavBar = () => {
   return (
     <nav className="navbar bg-white border-bottom border-primary border-end-100" >
@@ -25,7 +25,7 @@ const NavBar = () => {
           </div>
         </div>
 
-        <Link to={ROUTES.ADD_NOTE} style={{ textDecoration: "none" }}>
+        <Link to={noteRoutes.ADD_NOTE} style={{ textDecoration: "none" }}>
           <button
             className="btn btn-outline-primary"
             type="button"
