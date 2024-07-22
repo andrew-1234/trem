@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { createNote } from '../api'
+import { CreateNote } from '../api'
 import NoteForms from '../components/NoteForms'
 import { Note } from '../constants/noteType'
 import { useNavigate } from 'react-router-dom'
@@ -12,7 +12,7 @@ function AddNotePage() {
   })
   const submitNote = async (note: Note) => {
     try {
-      const createdNoteID = await createNote(note);
+      const createdNoteID = await CreateNote(note);
       console.log('Note created:', createdNoteID);
       navigate(`/note/${createdNoteID}`);
     } catch (error) {

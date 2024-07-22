@@ -2,8 +2,8 @@ import { BiSolidTrashAlt } from "react-icons/bi";
 import { FiEdit } from "react-icons/fi";
 import { useEffect } from 'react';
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ROUTES } from "../constants/routes";
-import { useFetchNote } from '../components/useFetchNote';
+import { noteRoutes } from "../constants/NoteRoutes";
+import { UseFetchNote } from "../components/UseFetchNote"
 
 const NotePage = () => {
   const navigate = useNavigate()
@@ -21,7 +21,7 @@ const NotePage = () => {
 
   // Fetch note data by ID
   const { id } = useParams<{ id: string }>();
-  const { note, loading, error } = useFetchNote(Number(id));
+  const { note, loading, error } = UseFetchNote(Number(id));
 
   // Return if loading, error, or note not found
   if (loading) {
@@ -61,7 +61,7 @@ const NotePage = () => {
       <div className="d-flex flex-row justify-content-end">
         <div>
           {/* Edit Note */}
-          <Link to={ROUTES.EDIT_NOTE(note.id.toString())} className="btn btn-outline-primary btn-sm m-1"><FiEdit /><span>Edit</span></Link>
+          <Link to={noteRoutes.EDIT_NOTE(note.id.toString())} className="btn btn-outline-primary btn-sm m-1"><FiEdit /><span>Edit</span></Link>
           {/* Delete Note */}
           <button className="btn btn-danger btn-sm m-1"><BiSolidTrashAlt /><span>Delete</span></button>
         </div>

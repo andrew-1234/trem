@@ -3,7 +3,7 @@ from django.db.models.manager import BaseManager
 from django.http import HttpRequest
 from ninja import NinjaAPI, Schema
 from typing import List, Optional
-
+from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
 from trem_app.models import Note
 
@@ -26,6 +26,10 @@ class NoteOut(Schema):
     slug: str
 
 
+class NotePagination(PageNumberPagination):
+    page_size = 10
+
+
 # Create note
 @api.post("/notes")
 def create_note(request: HttpRequest, payload: NoteIn) -> dict[str, int]:
@@ -41,10 +45,25 @@ def get_note(request: HttpRequest, note_id: int) -> Note:
 
 
 # List notes
+# @api.get("/notes", response=List[NoteOut])
+# def list_notes(request: HttpRequest) -> BaseManager[Note]:
+#     qs: BaseManager[Note] = Note.objects.all()
+#     return qs
 @api.get("/notes", response=List[NoteOut])
-def list_notes(request: HttpRequest) -> BaseManager[Note]:
+def list_notes(
+    request: HttpRequest, page: int = 1, page_size: int = 10
+) -> BaseManager[Note]:
     qs: BaseManager[Note] = Note.objects.all()
-    return qs
+    start = (page - 1) * page_size
+    end = start + page_size
+    return qs[start:end]
+
+
+# Get number of database entries in notes
+@api.get("/count")
+def count_notes(request: HttpRequest):
+    count: int = Note.objects.count()
+    return {"count": count}
 
 
 # Update note by ID

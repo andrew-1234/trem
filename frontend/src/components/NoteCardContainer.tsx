@@ -4,7 +4,11 @@ import { FetchNotes } from "../api";
 import { useState, useEffect } from "react";
 import { HomePagination } from "../components/HomePagination"
 
-const NoteCardContainer = () => {
+interface NoteCardContainerProps {
+  totalNotes: number;
+}
+
+const NoteCardContainer = (props: NoteCardContainerProps) => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -32,9 +36,10 @@ const NoteCardContainer = () => {
   // use HomePagination to display the pagination
 
   // const page_count = Math.ceil(notes.length / page_size);
-  var page_count = 10;
-  console.log('page_count', page_count)
-  console.log(notes.length)
+  // var total_notes = FetchTotalNotes();
+
+  const page_count = Math.ceil(props.totalNotes / 10); // Assuming 10 notes per page
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -43,15 +48,37 @@ const NoteCardContainer = () => {
     return <div>Error: {error}</div>;
   }
 
+  // if (props.totalNotes === 0) {
+  //   return <div>No notes found</div>;
+  // }
+  const dummyNote: Note = {
+    id: 0,
+    title: "Your First Note - Welcome! ",
+    content: "Click the title to get started.",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    tags: "inbox get-started"
+  }
 
   return (
     <div className="container">
       <div className="pagination-sm" >
         <div className="row">
-          {notes.map(note => (
+          {/* {notes.map(note => (
             <div key={note.id} className="list">
               <NoteCard note={note} />
-            </div>))}
+            </div>))} */}
+          {props.totalNotes === 0 ? (
+            <div className="list">
+              <NoteCard note={dummyNote} />
+            </div>
+          ) : (
+            notes.map(note => (
+              <div key={note.id} className="list">
+                <NoteCard note={note} />
+              </div>
+            ))
+          )}
           <p>hello</p>
           <HomePagination pageCount={page_count} onPageChange={setPage} currentPage={page} />
         </div>

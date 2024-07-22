@@ -22,6 +22,15 @@ export const FetchNoteById = async (id: number): Promise<Note> => {
   return data as Note;
 };
 
+// Fetch the total number of notes
+export const FetchTotalNotes = async (): Promise<{ count: number }> => {
+  const response = await fetch(`${BASE_URL}/api/count`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch total notes');
+  }
+  const data = await response.json();
+  return data;
+};
 
 // Update a note
 export const EditNote = async (note: Note): Promise<Note> => {

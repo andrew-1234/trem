@@ -14,10 +14,16 @@ const NoteCard = ({ note, color = "magenta" }: NoteCardProps) => {
     <div className="single-note-item">
       <div className="card card-body">
 
-        {/* Link to the Note's Page */}
-        <Link to={noteRoutes.NOTE_INFO(note.id.toString())} style={{ textDecoration: 'none' }}>
-          <h5 className="note-title text-truncate w-75" data-note-title={note.title}>{note.title}</h5>
-        </Link>
+        {/* If dummy note (id 0), link to Add Note  */}
+        {/* Else, link to the Note's Info Page */}
+        {note.id === 0 ? (
+          <Link to={noteRoutes.ADD_NOTE} style={{ textDecoration: 'none' }}>
+            <h5 className="note-title text-truncate w-75" data-note-title={note.title}>{note.title}</h5>
+          </Link>
+        ) : (
+          < Link to={noteRoutes.NOTE_INFO(note.id.toString())} style={{ textDecoration: 'none' }}>
+            <h5 className="note-title text-truncate w-75" data-note-title={note.title}>{note.title}</h5>
+          </Link>)}
 
         {/* Note Metadata: Date Created */}
         <h6 className="mb-2 text-black text-opacity-50">{new Date(note.created_at).toLocaleString()}</h6>

@@ -1,8 +1,8 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import { Note } from '../constants/noteType'
-import { editNote } from '../api';
-import { useFetchNote } from '../components/useFetchNote';
+import { EditNote } from '../api';
+import { UseFetchNote } from '../components/UseFetchNote';
 import NoteForms from '../components/NoteForms'
 
 function EditNotePage() {
@@ -15,7 +15,7 @@ function EditNotePage() {
 
   // Fetch note data by ID
   const { id } = useParams<{ id: string }>();
-  const { note, loading, error } = useFetchNote(Number(id));
+  const { note, loading, error } = UseFetchNote(Number(id));
 
 
   // Return if loading, error, or note not found
@@ -31,7 +31,7 @@ function EditNotePage() {
 
   // Define the submitNote function
   const submitNote = async (note: Note) => {
-    await editNote(note);
+    await EditNote(note);
     console.log('Note edited:', id);
     navigate(`/note/${id}`)
   }
