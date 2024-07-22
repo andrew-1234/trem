@@ -1,10 +1,10 @@
 import { Note } from '../constants/noteType';
-const BASE_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000';
+var BASE_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000';
 
 // List all notes
-export const fetchNotes = async (): Promise<Note[]> => {
+export const FetchNotes = async (page: Number = 1, page_size: Number = 10): Promise<Note[]> => {
   console.log('fetchNotes');
-  const response = await fetch(`${BASE_URL}/api/notes`);
+  const response = await fetch(`${BASE_URL}/api/notes?page=${page}&page_size=${page_size}`);
   if (!response.ok) {
     throw new Error('Failed to fetch notes');
   }
@@ -13,7 +13,7 @@ export const fetchNotes = async (): Promise<Note[]> => {
 };
 
 // Fetch a single note 
-export const fetchNoteByID = async (id: number): Promise<Note> => {
+export const FetchNoteById = async (id: number): Promise<Note> => {
   const response = await fetch(`${BASE_URL}/api/notes/${id}`);
   if (!response.ok) {
     throw new Error('Failed to fetch note');
@@ -22,8 +22,9 @@ export const fetchNoteByID = async (id: number): Promise<Note> => {
   return data as Note;
 };
 
+
 // Update a note
-export const editNote = async (note: Note): Promise<Note> => {
+export const EditNote = async (note: Note): Promise<Note> => {
   const response = await fetch(`${BASE_URL}/api/notes/${note.id}`, {
     method: 'PUT',
     headers: {
@@ -39,7 +40,7 @@ export const editNote = async (note: Note): Promise<Note> => {
 };
 
 // Create a new note
-export const createNote = async (note: Note): Promise<number> => {
+export const CreateNote = async (note: Note): Promise<number> => {
   const response = await fetch(`${BASE_URL}/api/notes`, {
     method: 'POST',
     headers: {
