@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
-import { Note } from '../constants/noteType'
+import { Note } from '../constants/NoteType'
 import { EditNote } from '../api';
 import { UseFetchNote } from '../components/UseFetchNote';
 import NoteForms from '../components/NoteForms'

@@ -1,4 +1,4 @@
-import { Note } from '../constants/noteType';
+import { Note } from '../constants/NoteType';
 var BASE_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000';
 
 // List all notes
@@ -46,6 +46,16 @@ export const EditNote = async (note: Note): Promise<Note> => {
   }
   const data = await response.json();
   return data as Note;
+};
+
+// Delete a note
+export const DeleteNote = async (id: number): Promise<void> => {
+  const response = await fetch(`${BASE_URL}/api/notes/${id}`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to delete note');
+  }
 };
 
 // Create a new note

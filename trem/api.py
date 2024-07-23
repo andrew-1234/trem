@@ -49,6 +49,9 @@ def get_note(request: HttpRequest, note_id: int) -> Note:
 # def list_notes(request: HttpRequest) -> BaseManager[Note]:
 #     qs: BaseManager[Note] = Note.objects.all()
 #     return qs
+
+
+# List notes with pagination
 @api.get("/notes", response=List[NoteOut])
 def list_notes(
     request: HttpRequest, page: int = 1, page_size: int = 10

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FetchNoteById } from '../api/';
-import { Note } from '../constants/noteType';
+import { Note } from '../constants/NoteType';
 
 export const UseFetchNote = (id: number) => {
   // export function useFetchNote(id: number) {

@@ -1,5 +1,5 @@
 import NoteCard from "./NoteCard";
-import { Note } from "../constants/noteType";
+import { Note } from "../constants/NoteType";
 import { FetchNotes } from "../api";
 import { useState, useEffect } from "react";
 import { HomePagination } from "../components/HomePagination"

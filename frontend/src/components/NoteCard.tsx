@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { Note } from '../constants/noteType';
-import { noteRoutes } from '../constants/NoteRoutes';
+import { Note } from '../constants/NoteType';
+import { NoteRoutes } from '../constants/NoteRoutes';
 
 type NoteCardProps = {
   note: Note;
@@ -17,11 +17,11 @@ const NoteCard = ({ note, color = "magenta" }: NoteCardProps) => {
         {/* If dummy note (id 0), link to Add Note  */}
         {/* Else, link to the Note's Info Page */}
         {note.id === 0 ? (
-          <Link to={noteRoutes.ADD_NOTE} style={{ textDecoration: 'none' }}>
+          <Link to={NoteRoutes.ADD_NOTE} style={{ textDecoration: 'none' }}>
             <h5 className="note-title text-truncate w-75" data-note-title={note.title}>{note.title}</h5>
           </Link>
         ) : (
-          < Link to={noteRoutes.NOTE_INFO(note.id.toString())} style={{ textDecoration: 'none' }}>
+          < Link to={NoteRoutes.NOTE_INFO(note.id.toString())} style={{ textDecoration: 'none' }}>
             <h5 className="note-title text-truncate w-75" data-note-title={note.title}>{note.title}</h5>
           </Link>)}
 

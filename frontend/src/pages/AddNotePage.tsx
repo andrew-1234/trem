@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { CreateNote } from '../api'
 import NoteForms from '../components/NoteForms'
-import { Note } from '../constants/noteType'
+import { Note } from '../constants/NoteType'
 import { useNavigate } from 'react-router-dom'
 
 function AddNotePage() {

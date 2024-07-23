@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Note } from '../constants/noteType';
+import { Note } from '../constants/NoteType';
 
 interface NoteFormProps {
   onSubmit: (note: Note) => void;
