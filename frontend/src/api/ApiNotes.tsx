@@ -1,5 +1,5 @@
 import { Note } from '../constants/NoteType';
-var BASE_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000';
+var BASE_URL = import.meta.env.VITE_APP_API_URL;
 
 // List all notes
 export const FetchNotes = async (page: Number = 1, page_size: Number = 10): Promise<Note[]> => {
