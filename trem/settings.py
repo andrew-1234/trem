@@ -95,6 +95,8 @@ WSGI_APPLICATION = "trem.wsgi.application"
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:5174",
+    f"https://{RENDER_EXTERNAL_HOSTNAME}",
+    "https://trem-bxwv.onrender.com/",
 ]
 
 # Database
