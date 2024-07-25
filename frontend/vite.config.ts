@@ -4,6 +4,7 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
+  define: { 'process.env': {} },
   build: {
     outDir: path.resolve(__dirname, '../static/js'),
     emptyOutDir: true,
