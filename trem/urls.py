@@ -16,11 +16,18 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
-from django.urls.resolvers import URLResolver
-from .api import api
+from django.urls import URLPattern, path, URLResolver
+from typing import Union
 
-urlpatterns: list[URLResolver] = [
+# from django.urls.resolvers import URLResolver
+from .api import api
+from django.views.generic import TemplateView
+
+urlpatterns: list[Union[URLResolver, URLPattern]] = [
     path("admin/", admin.site.urls),
     path("api/", api.urls),
+    # path("trem/", TemplateView.as_view(template_name="trem.html")),
+    path(
+        "", TemplateView.as_view(template_name="trem.html")
+    ),  # Redirect root URL to 'trem/'
 ]

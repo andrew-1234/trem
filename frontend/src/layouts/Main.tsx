@@ -1,8 +1,7 @@
 import NavBar from "../components/NavBar"
 import { Outlet } from "react-router-dom"
-type Props = {}
 
-const Main = (props: Props) => {
+const Main = () => {
   return (
     <>
       <NavBar></NavBar>

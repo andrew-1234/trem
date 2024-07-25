@@ -7,7 +7,7 @@ type NoteCardProps = {
   color?: string;
 };
 
-const NoteCard = ({ note, color = "magenta" }: NoteCardProps) => {
+const NoteCard = ({ note }: NoteCardProps) => {
   const tagsArray = note.tags.split(/[, ]+/).map(tag => tag.trim()).filter(tag => tag.length > 0);
   return (
 
