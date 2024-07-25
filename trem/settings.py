@@ -93,10 +93,10 @@ TEMPLATES = [  # type: ignore
 WSGI_APPLICATION = "trem.wsgi.application"
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://localhost:5174",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
     f"https://{RENDER_EXTERNAL_HOSTNAME}",
-    "https://trem-bxwv.onrender.com/",
+    "https://trem-bxwv.onrender.com",
 ]
 
 # Database
