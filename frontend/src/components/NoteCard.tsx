@@ -26,7 +26,7 @@ const NoteCard = ({ note }: NoteCardProps) => {
           </Link>)}
 
         {/* Note Metadata: Date Created */}
-        <h6 className="mb-2 text-black text-opacity-50">{new Date(note.created_at).toLocaleString()}</h6>
+        <h6 className="mb-2 text-black text-opacity-50">Created: {new Date(note.created_at).toLocaleString()}</h6>
 
         {/* Note Metadata: Tags */}
         <div className="tags mb-2">

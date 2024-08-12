@@ -3,7 +3,8 @@ var BASE_URL = import.meta.env.VITE_APP_API_URL;
 
 // List all notes
 export const FetchNotes = async (page: Number = 1, page_size: Number = 10): Promise<Note[]> => {
-  console.log('fetchNotes');
+  console.log('FetchNotes');
+  console.log('BASE_URL', BASE_URL);
   const response = await fetch(`${BASE_URL}/api/notes?page=${page}&page_size=${page_size}`);
   if (!response.ok) {
     throw new Error('Failed to fetch notes');
@@ -24,6 +25,7 @@ export const FetchNoteById = async (id: number): Promise<Note> => {
 
 // Fetch the total number of notes
 export const FetchTotalNotes = async (): Promise<{ count: number }> => {
+  console.log(BASE_URL);
   const response = await fetch(`${BASE_URL}/api/count`);
   if (!response.ok) {
     throw new Error('Failed to fetch total notes');

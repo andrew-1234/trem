@@ -69,7 +69,7 @@ const NotePage = () => {
       {/* Note Metadata box */}
       <div className="note-metadata d-flex flex-column border border-primary">
         <div> Created: {new Date(note.created_at).toLocaleString()} </div>
-        <div> Updated: {new Date(note.created_at).toLocaleString()} </div>
+        <div> Updated: {new Date(note.updated_at).toLocaleString()} </div>
         <div>Tags: {tagsArray.map((tag, index) => (
           <span key={index} className="badge bg-primary me-1">
             {tag}
