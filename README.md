@@ -6,7 +6,7 @@ Trem (noun)
 2. (*Minas Gerais, slang*): a thing, anything (except a train)
 
 Trem is a note taking application. Related notes can be added to an existing
-note, forming a thread, representing a chain or 'train' of thought. You could
+note, forming a thread, representing a 'train' of thought. You could
 think of it as being similar to a social media comment section, only you are
 talking to yourself.
 
