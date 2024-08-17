@@ -1,44 +1,28 @@
 import NoteCard from "./NoteCard";
 import { Note } from "../constants/NoteType";
-import { FetchNotes } from "../api";
-import { useState, useEffect } from "react";
-import { HomePagination } from "../components/HomePagination"
 
 interface NoteCardContainerProps {
   totalNotes: number;
+  notes: Note[];
+  loading: boolean;
+  error: string | null;
 }
 
-const NoteCardContainer = (props: NoteCardContainerProps) => {
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const NoteCardContainer = ({
+  totalNotes,
+  notes,
+  loading,
+  error,
+}: NoteCardContainerProps) => {
 
-  const [page, setPage] = useState(1);
-  const page_size = 10; // Set the number of notes per page
-  useEffect(() => {
-    const loadNotes = async () => {
-      try {
-        const notesData = await FetchNotes(page, page_size);
-        console.log('loadNotes inside NoteCardContainer')
-        setNotes(notesData);
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-        setError(errorMessage);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadNotes();
-  }, [page]);
-  // use FetchTotalNotes to get the total number of notes
-  // use Math.ceil to get the total number of pages
-  // use HomePagination to display the pagination
-
-  // const page_count = Math.ceil(notes.length / page_size);
-  // var total_notes = FetchTotalNotes();
-
-  const page_count = Math.ceil(props.totalNotes / 10); // Assuming 10 notes per page
+  const dummyNote: Note = {
+    id: 0,
+    title: "Your First Note - Welcome!",
+    content: "Click the title to get started.",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    tags: "inbox get-started",
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -48,42 +32,27 @@ const NoteCardContainer = (props: NoteCardContainerProps) => {
     return <div>Error: {error}</div>;
   }
 
-  // if (props.totalNotes === 0) {
-  //   return <div>No notes found</div>;
-  // }
-  const dummyNote: Note = {
-    id: 0,
-    title: "Your First Note - Welcome! ",
-    content: "Click the title to get started.",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    tags: "inbox get-started"
-  }
-
   return (
     <div className="container">
-      <div className="pagination-sm" >
-        <HomePagination pageCount={page_count} onPageChange={setPage} currentPage={page} />
-        <div className="row">
-          {/* {notes.map(note => (
+      <div className="row">
+        {totalNotes === 0 ? (
+          <div className="list">
+            <NoteCard note={dummyNote} />
+          </div>
+        ) : notes.length === 0 ? (
+          <div className="list">
+            <p>No results</p>
+          </div>
+        ) : (
+          notes.map((note) => (
             <div key={note.id} className="list">
               <NoteCard note={note} />
-            </div>))} */}
-          {props.totalNotes === 0 ? (
-            <div className="list">
-              <NoteCard note={dummyNote} />
             </div>
-          ) : (
-            notes.map(note => (
-              <div key={note.id} className="list">
-                <NoteCard note={note} />
-              </div>
-            ))
-          )}
-        </div>
+          ))
+        )}
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default NoteCardContainer;

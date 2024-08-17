@@ -6,7 +6,7 @@ from typing import List, Optional
 from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
 from trem_app.models import Note
-from django.contrib.postgres.search import SearchVector
+from django.db.models import Q
 # from django.db.models import F
 
 api = NinjaAPI()
@@ -91,13 +91,11 @@ def delete_note(request: HttpRequest, note_id: int) -> dict[str, bool]:
     return {"success": True}
 
 
-# Add a search results view
 @api.get("/search", response=List[NoteOut])
-def search_notes(request: HttpRequest, query: str) -> BaseManager[Note]:
-    # filter search
-    search_vector = SearchVector("title", "content", "tags")
-    qs: BaseManager[Note] = Note.objects.annotate(search=search_vector).filter(
-        search=query
+def search_notes2(request: HttpRequest, query: str) -> List[Note]:
+    results = Note.objects.filter(
+        Q(title__icontains=query)
+        | Q(content__icontains=query)
+        | Q(tags__icontains=query)
     )
-    # qs: BaseManager[Note] = Note.objects.all()
-    return qs
+    return list(results)

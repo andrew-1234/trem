@@ -51,3 +51,7 @@ method](https://www.atlassian.com/blog/productivity/zettelkasten-method) - How
 to apply Zettelkasten in today’s digital age.
 * [Detailed Guide on the Zettelkasten
 System](https://theproductiveengineer.net/how-to-use-the-zettelkasten-system-a-detailed-guide/) - An in-depth explanation of the Zettelkasten method and its principles.
+
+## References
+
+* [Code with Clinton](https://youtu.be/fHc9AfHllwc?si=Oj5qqi-Gu5lXGFdS)

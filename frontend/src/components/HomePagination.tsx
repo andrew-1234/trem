@@ -1,9 +1,8 @@
-
 interface PaginationProps {
   pageCount: number;
-  onPageChange: any;
+  onPageChange: (page: number) => void;
   currentPage: number;
-};
+}
 
 export const HomePagination = (props: PaginationProps) => {
   const pageNumbers = [];
@@ -16,15 +15,16 @@ export const HomePagination = (props: PaginationProps) => {
       <button
         className="btn btn-pagination btn-first-last"
         onClick={() => props.onPageChange(1)}
-        disabled={props.currentPage === 0}
+        disabled={props.currentPage === 1}
       >
         First
       </button>
-      {pageNumbers.map(number => (
+      {pageNumbers.map((number) => (
         <button
           key={number}
           onClick={() => props.onPageChange(number)}
-          className={`btn btn-pagination ${props.currentPage === number ? 'active' : ''}`}
+          className={`btn btn-pagination ${props.currentPage === number ? "active" : ""
+            }`}
         >
           {number}
         </button>
