@@ -156,4 +156,40 @@ form{
   }
 }
 
+// Additional styles to make sure text is visible
+// .wmde-markdown,
+// .wmde-markdown-var,
+// .w-md-editor {
+
+//   color: red !important;
+//   background-color: white !important;
+//   border-color: red !important;
+//   // bigger border;
+//   border-width: 4px !important;
+//   border-radius: 10px !important;
+//   box-shadow: 0 0 0 1px #0071{{c1::}}f5 !important;
+  
+// }
+.wmde-markdown,
+.wmde-markdown-var,
+.w-md-editor {
+  margin-top: 10px;
+  border-radius: 10px !important;
+}
+:root * { 
+  --color-canvas-default: white !important;
+  --color-border-default: #5938df !important;
+  --color-fg-default: black !important;
+}
+
+
+// .w-md-editor-preview, .wmde-markdown-var {
+//   color: red !important;
+//   background-color: white !important;
+//   border-color: red !important;
+//   // bigger border;
+//   border-width: 4px !important;
+//   border-radius: 10px !important;
+// }
+
 @import "../node_modules/bootstrap/scss/bootstrap.scss"
