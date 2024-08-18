@@ -34,7 +34,6 @@ function NoteForms(props: NoteFormProps) {
     if (note.tags && note.tags.length > 0) {
       // If note has tags, check if the values are comma separated
       // If not, convert to comma separated
-      // Should probably move this to backend
       var value = note.tags
       note.tags = value.split(/[, ]+/).map(tag => tag.trim()).filter(tag => tag.length > 0).join(', ')
     }

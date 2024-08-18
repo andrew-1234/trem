@@ -7,7 +7,6 @@ $primary: #5938df;
 $secondary: #876bf5; 
 $niceblue: #007bff;;
 $primary-bg-subtle: #e7fafa;
-
 $theme-colors: map-merge($theme-colors, (
   "primary": $primary,
   "secondary": $secondary,
@@ -18,12 +17,38 @@ $theme-colors: map-merge($theme-colors, (
 //   background-color: $primary !important;
 // }
 
+.modal {
+  z-index: 1050;
+  display: block;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-dialog {
+  max-width: 600px;
+  margin: 1.75rem auto;
+}
+
 //  General styling
 .container {
   margin-top: 20px;
   position: relative;
  }
- 
+
+ .navbar-trem {
+  padding: 0px;
+  margin-bottom: 0px;
+  border-radius: 0px;
+
+  .navbar-brand {
+    color: white;
+    background-color: $niceblue;
+    margin: 0px;
+    padding: 5px 100px 0px 100px;
+    border-radius: 10px;
+
+  }
+ }
+
  .row {
    row-gap: 20px;
  }
@@ -31,6 +56,7 @@ $theme-colors: map-merge($theme-colors, (
  .form-group {
   margin-bottom: 20px;
 }
+
 
 // Custom form styling
 form{
@@ -40,6 +66,7 @@ form{
   border-radius: 10px;
   box-shadow: $primary 0px 3px 8px;
   margin: 100px auto;
+  background-color: white;
 }
 
 // 'Note' related styling
@@ -61,20 +88,34 @@ form{
 }
 
 
-
 // Custom SCSS for action bar - pagination and search bar
 .action-bar {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   position: relative;
+  width: 100%;
+  
+  .action-inner {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    position: relative;
+    height: auto;
+    width: 60%;
+    
+    .add-note {
+      width: max-content;
+      margin-left: 1rem;
+    }
+  } 
   
   .input-group {
     align-items: center;
   }
   
   .search-bar {
-    width: 50%;
+    // width: 50%;
     height: auto;
   }
 

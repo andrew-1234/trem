@@ -46,13 +46,6 @@ def get_note(request: HttpRequest, note_id: int) -> Note:
     return note
 
 
-# List notes
-# @api.get("/notes", response=List[NoteOut])
-# def list_notes(request: HttpRequest) -> BaseManager[Note]:
-#     qs: BaseManager[Note] = Note.objects.all()
-#     return qs
-
-
 # List notes with pagination
 @api.get("/notes", response=List[NoteOut])
 def list_notes(
@@ -91,11 +84,18 @@ def delete_note(request: HttpRequest, note_id: int) -> dict[str, bool]:
     return {"success": True}
 
 
+# Search notes by query
 @api.get("/search", response=List[NoteOut])
 def search_notes2(request: HttpRequest, query: str) -> List[Note]:
-    results = Note.objects.filter(
-        Q(title__icontains=query)
-        | Q(content__icontains=query)
-        | Q(tags__icontains=query)
-    )
+    query_words = query.split()
+    q_objects = Q()
+
+    for word in query_words:
+        q_objects &= (
+            Q(title__icontains=word)
+            | Q(content__icontains=word)
+            | Q(tags__icontains=word)
+        )
+
+    results = Note.objects.filter(q_objects)
     return list(results)

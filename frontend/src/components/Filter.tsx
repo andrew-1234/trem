@@ -1,6 +1,7 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect } from "react";
 import { Note } from "../constants/NoteType";
 import { SearchNotes } from "../api";
+import { UseDebounced } from "../components/UseDebounced";
 
 interface FilterProps {
   searchQuery: string;
@@ -9,50 +10,50 @@ interface FilterProps {
 }
 
 const Filter = ({ searchQuery, setSearchQuery, setSearchResults }: FilterProps) => {
-  const handleSearch = async (query: string) => {
-    setSearchQuery(query);
-    if (query.length === 0) {
+  const debouncedSearchQuery = UseDebounced(searchQuery, 500); // 500ms debounce
+
+  useEffect(() => {
+    const handleSearch = async (query: string) => {
+      if (query.length === 0) {
+        setSearchResults([]);
+        return;
+      }
+      try {
+        const results = await SearchNotes(query);
+        setSearchResults(results);
+      } catch (err) {
+        console.error('Failed to search notes', err);
+        setSearchResults([]);
+      }
+    };
+
+    if (debouncedSearchQuery) {
+      handleSearch(debouncedSearchQuery);
+    } else {
       setSearchResults([]);
-      return;
     }
-    try {
-      const results = await SearchNotes(query);
-      setSearchResults(results);
-    } catch (err) {
-      console.error('Failed to search notes', err);
-    }
+  }, [debouncedSearchQuery, setSearchResults]);
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
   };
 
   return (
     < div
-      className="input-group search-bar"
-    // style={{ width: "500px", height: "40px" }}
+      className="input-group"
     >
 
       <input
         className="form-control"
         type="search"
-        placeholder="Search"
+        placeholder="Filter"
         aria-label="Search"
         value={searchQuery}
-        onChange={(e: ChangeEvent<HTMLInputElement>) => handleSearch(e.target.value)}
+        onChange={handleInputChange}
       />
 
-      <button className="btn btn-primary" type="submit">
-        Search
-      </button>
+
     </div >
-    // </div >
-    // <div className="container">
-    //   <input
-    //     className="form-control"
-    //     type="search"
-    //     placeholder="Search"
-    //     aria-label="Search"
-    //     value={searchQuery}
-    //     onChange={(e: ChangeEvent<HTMLInputElement>) => handleSearch(e.target.value)}
-    //   />
-    // </div>
   );
 };
 

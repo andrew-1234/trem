@@ -4,14 +4,12 @@ import { Note } from "../constants/NoteType";
 interface NoteCardContainerProps {
   totalNotes: number;
   notes: Note[];
-  loading: boolean;
   error: string | null;
 }
 
 const NoteCardContainer = ({
   totalNotes,
   notes,
-  loading,
   error,
 }: NoteCardContainerProps) => {
 
@@ -24,32 +22,28 @@ const NoteCardContainer = ({
     tags: "inbox get-started",
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  const renderContent = () => {
+    if (error) {
+      return <div>Error: {error}</div>;
+    }
+    if (totalNotes === 0) {
+      return (
+        <div className="list">
+          <NoteCard note={dummyNote} />
+        </div>
+      );
+    }
+    return notes.map((note) => (
+      <div key={note.id} className="list">
+        <NoteCard note={note} />
+      </div>
+    ));
+  };
 
   return (
     <div className="container">
       <div className="row">
-        {totalNotes === 0 ? (
-          <div className="list">
-            <NoteCard note={dummyNote} />
-          </div>
-        ) : notes.length === 0 ? (
-          <div className="list">
-            <p>No results</p>
-          </div>
-        ) : (
-          notes.map((note) => (
-            <div key={note.id} className="list">
-              <NoteCard note={note} />
-            </div>
-          ))
-        )}
+        {renderContent()}
       </div>
     </div>
   );
