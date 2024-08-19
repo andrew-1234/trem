@@ -174,25 +174,25 @@ form{
 .wmde-markdown,
 .wmde-markdown-var,
 .w-md-editor {
-  margin-top: 10px;
-  border-radius: 10px !important;
+  // margin-top: 10px;
+  // border-radius: 10px !important;
 }
 
-.wmde-markdown-var{
-  .w-md-editor-toolbar {
-    border-top: 0px;
-    border-left: 0px;
-    border-right: 0px;
-    border-bottom: 1px solid #5938df;
-    background-color: transparent;
-  }
-}
+// .wmde-markdown-var{
+//   .w-md-editor-toolbar {
+//     border-top: 0px;
+//     border-left: 0px;
+//     border-right: 0px;
+//     border-bottom: 1px solid #5938df;
+//     background-color: transparent;
+//   }
+// }
 
-:root * { 
-  --color-canvas-default: white !important;
-  --color-border-default: #5938df !important;
-  --color-fg-default: black !important;
-}
+// :root * { 
+//   --color-canvas-default: white !important;
+//   --color-border-default: #5938df !important;
+//   --color-fg-default: black !important;
+// }
 
 
 // .w-md-editor-preview, .wmde-markdown-var {

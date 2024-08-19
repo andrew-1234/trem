@@ -1,103 +1,145 @@
-import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { BiSave, BiSolidTrashAlt } from "react-icons/bi";
-import { FiEdit } from "react-icons/fi";
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import MDEditor, { codeEdit, codePreview, commands, EditorContext, MDEditorProps, title1 } from '@uiw/react-md-editor';
-import { NoteRoutes } from "../constants/NoteRoutes";
-import { UseFetchNote } from "../components/UseFetchNote";
-import { DeleteNote, EditNote } from "../api";
-import React from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { BiSave, BiSolidTrashAlt } from 'react-icons/bi';
+import { Modal, Button, ButtonGroup, Toast, ToastContainer } from 'react-bootstrap';
+import MDEditor from '@uiw/react-md-editor';
 import styled from 'styled-components';
-import { ButtonGroup } from 'react-bootstrap';
 
-const NotePage = () => {
+import { DeleteNote, EditNote } from '../api';
+import { Note } from '../constants/NoteType';
+import { UseFetchNote } from '../components/UseFetchNote';
+
+// Styled components
+const Container = styled.div`
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+`;
+
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+const Title = styled.h1`
+  margin: 0;
+`;
+
+const Metadata = styled.div`
+  border: 1px solid #5938df;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+`;
+
+const StyledMDEditor = styled(MDEditor)`
+  --color-canvas-default: white;
+  --color-fg-default: black;
+  --color-border-default: #5938df  
+  margin-bottom: 20px;
+  margin-top: 10px;
+  border-radius: 10px;
+  border: 1px solid #5938df;
+  box-shadow: 0 0 0;
+  
+  .w-md-editor-preview {
+  }
+  
+  .w-md-editor-toolbar {
+    border-top: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    border-bottom: 1px solid #5938df;
+    background-color: transparent;
+}
+`;
+
+const StyledToastContainer = styled(ToastContainer)`
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+`;
+
+const NotePage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { note, setNote, loading, error } = UseFetchNote(Number(id));
-  const [confirmShow, setConfirmShow] = useState(false);
 
-  const Toolbar = styled.div`
-  padding-top: 10px;
-  text-align: center;
-  `;
-
-  const [state, setVisible] = React.useState<MDEditorProps>({
-    hideToolbar: false,
-    value: '',
-    preview: 'preview',
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [editorState, setEditorState] = useState({
+    content: '',
+    preview: 'edit' as 'edit' | 'live' | 'preview',
   });
-
-  const upPreview = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setVisible({ ...state, preview: e.target.value as MDEditorProps['preview'] });
-  };
-
+  const [toast, setToast] = useState({ show: false, message: '', variant: 'success' });
   useEffect(() => {
     if (note) {
-      // setVisible({ ...state, value: note.content });
-      setVisible({ ...state, value: note.content });
-      // document.title = note.title.length >= 20 ? note.title.slice(0, 20) : note.title;
-    } else {
-      document.title = 'Note';
+      setEditorState(prev => ({ ...prev, content: note.content }));
+      // document.title = `Note: ${note.title.slice(0, 20)}`;
+      if (note.title) {
+        const truncatedTitle = note.title.length > 20 ? note.title.slice(0, 20) : note.title;
+        document.title = `Note: ${truncatedTitle}`;
+      }
     }
   }, [note]);
-
-  const handleDeleteFirst = () => setConfirmShow(true);
-
-  const handleDelete = async (noteId: number) => {
-    try {
-      await DeleteNote(Number(noteId));
-      navigate("/");
-    } catch (err) {
-      console.error('Failed to delete note', err);
-    }
+  const showToast = (message: string, variant: 'success' | 'danger') => {
+    setToast({ show: true, message, variant });
   };
-
-  // Define the submitNote function
-
-  // const submitNote = async () => {
-  //   // Update the state of the original note.content with new content
-  //   setNote({ ...note, content: state.value ?? '' });
-  //   // note.content = state.value ?? '';
-  //   await EditNote(note);
-  //   // alert the user that the note has been edited
-  //   // without using console log 
-  //   // navigate(`/note/${id}`)
-  // }
-  const submitNote = async () => {
+  const handleSave = useCallback(async () => {
     if (!note) return;
 
-    const updatedNote = { ...note, content: state.value ?? '' };
+    const updatedNote: Note = { ...note, content: editorState.content };
     try {
       await EditNote(updatedNote);
       setNote(updatedNote);
-      alert("Note saved successfully!");
+      showToast('Note saved successfully!', 'success');
     } catch (err) {
       console.error('Failed to save note', err);
-      alert("Failed to save note. Please try again.");
+      showToast('Failed to save note. Please try again.', 'danger');
     }
-  }
+  }, [note, editorState.content, setNote]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!note) return <div>Note not found</div>;
+  const handleDelete = useCallback(async () => {
+    if (!note) return;
+
+    try {
+      await DeleteNote(note.id);
+      showToast('Note deleted successfully!', 'success');
+
+      // Delay navigation to allow toast to be visible
+      setTimeout(() => {
+        navigate('/');
+      }, 1500); // Adjust this delay as needed
+    } catch (err) {
+      console.error('Failed to delete note', err);
+      showToast('Failed to delete note. Please try again.', 'danger');
+    }
+  }, [note, navigate]);
+
+  if (loading) return <Container>Loading...</Container>;
+  if (error) return <Container>Error: {error}</Container>;
+  if (!note) return <Container>Note not found</Container>;
 
   const tagsArray = note.tags.split(/[, ]+/).map(tag => tag.trim()).filter(tag => tag.length > 0);
 
   return (
-    <div className="container">
-      <div className="d-flex justify-content-between">
-        <h1 className="title">{note.title}</h1>
-        <button
-          onClick={() => navigate(-1)}
-          className="btn btn-primary btn-sm align-self-end m-2"
-        >
+    <Container>
+      <Header>
+        <Title>{note.title}</Title>
+        <Button variant="primary" size="sm" onClick={() => navigate(-1)}>
           Back
-        </button>
-      </div>
+        </Button>
+      </Header>
 
-      <div className="note-metadata d-flex flex-column border border-primary">
+      <Metadata>
         <div>Created: {new Date(note.created_at).toLocaleString()}</div>
         <div>Updated: {new Date(note.updated_at).toLocaleString()}</div>
         <div>
@@ -108,132 +150,68 @@ const NotePage = () => {
             </span>
           ))}
         </div>
-      </div>
+      </Metadata>
 
-      <div className="d-flex flex-row justify-content-end">
-
-        <Link to={NoteRoutes.EDIT_NOTE(note.id.toString())}
-          className="btn btn-outline-primary btn-sm m-1">
-          <FiEdit />
-          <span>Edit</span>
-        </Link>
-
-        <Button name="content" className="btn-sm m-1 btn-success" onClick={submitNote}>
-          <BiSave />
-          Save
+      <ButtonContainer>
+        <Button variant="success" size="sm" className="me-2" onClick={handleSave}>
+          <BiSave /> Save
         </Button>
-
-        <Button className="btn-sm m-1 btn-danger" onClick={handleDeleteFirst}>
-          <BiSolidTrashAlt />
-          Delete
+        <Button variant="danger" size="sm" className="me-2" onClick={() => setShowDeleteConfirm(true)}>
+          <BiSolidTrashAlt /> Delete
         </Button>
-
-        <ButtonGroup className="m-1">
-          <input
-            type="radio"
-            className="btn-check"
-            name="preview"
-            id="edit"
-            value="edit"
-            autoComplete="off"
-            checked={state.preview === "edit"}
-            onChange={upPreview}
-          />
-          <label
-            className={`btn btn-sm ${state.preview === "edit" ? "btn-primary" : "btn-outline-secondary"}`}
-            htmlFor="edit"
-          >
-            Edit
-          </label>
-
-          <input
-            type="radio"
-            className="btn-check"
-            name="preview"
-            id="live"
-            value="live"
-            autoComplete="off"
-            checked={state.preview === "live"}
-            onChange={upPreview}
-          />
-          <label
-            className={`btn btn-sm ${state.preview === "live" ? "btn-primary" : "btn-outline-secondary"}`}
-            htmlFor="live"
-          >
-            Live Preview
-          </label>
-
-          <input
-            type="radio"
-            className="btn-check"
-            name="preview"
-            id="preview"
-            value="preview"
-            autoComplete="off"
-            checked={state.preview === "preview"}
-            onChange={upPreview}
-          />
-          <label
-            className={`btn btn-sm ${state.preview === "preview" ? "btn-primary" : "btn-outline-secondary"}`}
-            htmlFor="preview"
-          >
-            Preview
-          </label>
+        <ButtonGroup size="sm">
+          {(['edit', 'live', 'preview'] as const).map((mode) => (
+            <Button
+              key={mode}
+              variant={editorState.preview === mode ? 'primary' : 'outline-secondary'}
+              onClick={() => setEditorState(prev => ({ ...prev, preview: mode }))}
+            >
+              {mode.charAt(0).toUpperCase() + mode.slice(1)}
+            </Button>
+          ))}
         </ButtonGroup>
-      </div>
+      </ButtonContainer>
 
+      <StyledMDEditor data-color-mode="light"
+        value={editorState.content}
+        onChange={(value) => setEditorState(prev => ({ ...prev, content: value || '' }))}
+        preview={editorState.preview}
+        height={400}
+      />
 
-      <div className='wmde-markdown-var'>
-
-        <MDEditor
-          autoFocus
-          value={state.value}
-          height={400}
-          hideToolbar={!state.hideToolbar}
-          textareaProps={{
-            placeholder: "Please enter Markdown text",
-          }}
-          preview={state.preview}
-          onChange={(newValue = "") => {
-            setVisible({ ...state, value: newValue });
-          }}
-          extraCommands={[]}
-        />
-
-        <Toolbar>
-          <label>
-            <input
-              type="checkbox"
-              checked={state.hideToolbar}
-              onChange={(e) => {
-                setVisible({ ...state, hideToolbar: e.target.checked });
-              }}
-            />
-            Show ToolBar
-            {/* {state.hideToolbar ? 'Show' : 'Hidden'} ToolBar */}
-          </label>
-
-        </Toolbar>
-
-      </div>
-      <Modal show={confirmShow} onHide={() => setConfirmShow(false)}>
+      <Modal show={showDeleteConfirm} onHide={() => setShowDeleteConfirm(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Confirm Delete</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Are you sure you want to delete? This is permanent.
+          Are you sure you want to delete this note? This action cannot be undone.
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setConfirmShow(false)}>
+          <Button variant="secondary" onClick={() => setShowDeleteConfirm(false)}>
             Cancel
           </Button>
-          <Button variant="danger" onClick={() => handleDelete(note.id)}>
-            I'm sure
+          <Button variant="danger" onClick={handleDelete}>
+            Delete
           </Button>
         </Modal.Footer>
       </Modal>
-    </div>
+      <StyledToastContainer>
+        <Toast
+          show={toast.show}
+          onClose={() => setToast(prev => ({ ...prev, show: false }))}
+          delay={3000}
+          autohide
+          bg={toast.variant}
+        >
+          <Toast.Header>
+            <strong className="me-auto">Notification</strong>
+          </Toast.Header>
+          <Toast.Body>{toast.message}</Toast.Body>
+        </Toast>
+      </StyledToastContainer>
+    </Container>
   );
 };
 
 export default NotePage;
+
