@@ -4,7 +4,7 @@ import { Note } from '../constants/NoteType';
 
 export const UseFetchNote = (id: number) => {
   // export function useFetchNote(id: number) {
-  const [note, setNote] = useState<Note | null>(null)
+  const [note, setNote] = useState<Note>({} as Note)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -24,5 +24,5 @@ export const UseFetchNote = (id: number) => {
     loadNote()
   }, [id])
 
-  return { note, loading, error }
+  return { note, setNote, loading, error }
 }

@@ -170,12 +170,24 @@ form{
 //   box-shadow: 0 0 0 1px #0071{{c1::}}f5 !important;
   
 // }
+
 .wmde-markdown,
 .wmde-markdown-var,
 .w-md-editor {
   margin-top: 10px;
   border-radius: 10px !important;
 }
+
+.wmde-markdown-var{
+  .w-md-editor-toolbar {
+    border-top: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    border-bottom: 1px solid #5938df;
+    background-color: transparent;
+  }
+}
+
 :root * { 
   --color-canvas-default: white !important;
   --color-border-default: #5938df !important;

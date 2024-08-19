@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { BiSolidTrashAlt } from "react-icons/bi";
+import { BiSave, BiSolidTrashAlt } from "react-icons/bi";
 import { FiEdit } from "react-icons/fi";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import MDEditor, { codeEdit, codePreview, commands, EditorContext, MDEditorProps, title1 } from '@uiw/react-md-editor';
 import { NoteRoutes } from "../constants/NoteRoutes";
 import { UseFetchNote } from "../components/UseFetchNote";
-import { DeleteNote } from "../api";
+import { DeleteNote, EditNote } from "../api";
 import React from 'react';
 import styled from 'styled-components';
 import { ButtonGroup } from 'react-bootstrap';
@@ -15,9 +15,8 @@ import { ButtonGroup } from 'react-bootstrap';
 const NotePage = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const { note, loading, error } = UseFetchNote(Number(id));
+  const { note, setNote, loading, error } = UseFetchNote(Number(id));
   const [confirmShow, setConfirmShow] = useState(false);
-  const [newContent, setNewContent] = useState("");
 
   const Toolbar = styled.div`
   padding-top: 10px;
@@ -30,19 +29,15 @@ const NotePage = () => {
     preview: 'preview',
   });
 
-  const handleEditorChange = (value?: string) => {
-    setNewContent(value || "");
-  };
-
   const upPreview = (e: React.ChangeEvent<HTMLInputElement>) => {
     setVisible({ ...state, preview: e.target.value as MDEditorProps['preview'] });
   };
 
   useEffect(() => {
     if (note) {
-      setNewContent(note.content);
+      // setVisible({ ...state, value: note.content });
       setVisible({ ...state, value: note.content });
-      document.title = note.title.length >= 20 ? note.title.slice(0, 20) : note.title;
+      // document.title = note.title.length >= 20 ? note.title.slice(0, 20) : note.title;
     } else {
       document.title = 'Note';
     }
@@ -59,7 +54,30 @@ const NotePage = () => {
     }
   };
 
+  // Define the submitNote function
 
+  // const submitNote = async () => {
+  //   // Update the state of the original note.content with new content
+  //   setNote({ ...note, content: state.value ?? '' });
+  //   // note.content = state.value ?? '';
+  //   await EditNote(note);
+  //   // alert the user that the note has been edited
+  //   // without using console log 
+  //   // navigate(`/note/${id}`)
+  // }
+  const submitNote = async () => {
+    if (!note) return;
+
+    const updatedNote = { ...note, content: state.value ?? '' };
+    try {
+      await EditNote(updatedNote);
+      setNote(updatedNote);
+      alert("Note saved successfully!");
+    } catch (err) {
+      console.error('Failed to save note', err);
+      alert("Failed to save note. Please try again.");
+    }
+  }
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -94,13 +112,17 @@ const NotePage = () => {
 
       <div className="d-flex flex-row justify-content-end">
 
-        <Link
-          to={NoteRoutes.EDIT_NOTE(note.id.toString())}
-          className="btn btn-outline-primary btn-sm m-1"
-        >
+        <Link to={NoteRoutes.EDIT_NOTE(note.id.toString())}
+          className="btn btn-outline-primary btn-sm m-1">
           <FiEdit />
           <span>Edit</span>
         </Link>
+
+        <Button name="content" className="btn-sm m-1 btn-success" onClick={submitNote}>
+          <BiSave />
+          Save
+        </Button>
+
         <Button className="btn-sm m-1 btn-danger" onClick={handleDeleteFirst}>
           <BiSolidTrashAlt />
           Delete
@@ -160,27 +182,6 @@ const NotePage = () => {
         </ButtonGroup>
       </div>
 
-      {/* <div
-        // data-color-mode="light"
-        className="note-content border border-primary"
-      >
-        <MDEditor
-          value={newContent}
-          onChange={handleEditorChange}
-          preview="edit"
-          commands={[
-            // Custom Toolbars
-            title1,
-          ]}
-          extraCommands={[codePreview, codeEdit]}
-        />
-
-        <br />
-        <hr></hr>
-        <br />
-        <MDEditor.Markdown source={newContent} />
-      </div> */}
-
 
       <div className='wmde-markdown-var'>
 
@@ -196,7 +197,9 @@ const NotePage = () => {
           onChange={(newValue = "") => {
             setVisible({ ...state, value: newValue });
           }}
+          extraCommands={[]}
         />
+
         <Toolbar>
           <label>
             <input
@@ -210,8 +213,8 @@ const NotePage = () => {
             {/* {state.hideToolbar ? 'Show' : 'Hidden'} ToolBar */}
           </label>
 
-
         </Toolbar>
+
       </div>
       <Modal show={confirmShow} onHide={() => setConfirmShow(false)}>
         <Modal.Header closeButton>
