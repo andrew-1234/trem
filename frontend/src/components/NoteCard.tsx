@@ -41,6 +41,16 @@ const NoteCard = ({ note }: NoteCardProps) => {
         <div className="card-text text-truncate" data-card-text={note.content}>
           {note.content}
         </div>
+        <div className="single-note-item">
+          <div className="card card-body">
+            Hello
+          </div>
+        </div>
+        <div className="single-note-item">
+          <div className="card card-body">
+            Hello
+          </div>
+        </div>
       </div>
     </div >
 

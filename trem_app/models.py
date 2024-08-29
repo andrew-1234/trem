@@ -15,9 +15,15 @@ class Note(BaseModel):
     updated_at = models.DateTimeField(auto_now=True)
     tags = models.CharField(max_length=200, blank=True, default="")
     slug = models.SlugField(max_length=200, unique=True, editable=False)
+    thread = models.ForeignKey(
+        "self", null=True, blank=True, related_name="replies", on_delete=models.CASCADE
+    )
 
     def __str__(self):
         return self.title
+
+    def is_root_note(self):
+        return self.thread is None
 
     def save(self, *args, **kwargs) -> None:  # type: ignore
         super(Note, self).save(*args, **kwargs)  # type: ignore

@@ -16,6 +16,7 @@ class NoteIn(Schema):
     title: Optional[str] = None
     content: Optional[str] = None
     tags: Optional[str] = None
+    thread_id: Optional[int] = None
 
 
 class NoteOut(Schema):
@@ -26,6 +27,8 @@ class NoteOut(Schema):
     updated_at: datetime
     tags: str
     slug: str
+    is_root: bool
+    reply_count: int
 
 
 class NotePagination(PageNumberPagination):
