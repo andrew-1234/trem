@@ -6,6 +6,7 @@ class NoteAdmin(admin.ModelAdmin[Note]):
     # List of fields to display in the list view
     list_display = (
         "id",
+        "thread",
         "title",
         "content",
         "created_at",

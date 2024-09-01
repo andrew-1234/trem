@@ -5,4 +5,7 @@ export interface Note {
   created_at: string;
   updated_at: string;
   tags: string;
+  slug: string;
+  thread_id: number | null;
+  replies?: Note[];
 }

@@ -2,13 +2,12 @@ import { Note } from '../constants/NoteType';
 var BASE_URL = import.meta.env.VITE_APP_API_URL;
 
 // List all notes
-export const FetchNotes = async (page: Number = 1, page_size: Number = 10): Promise<Note[]> => {
+export const FetchNotes = async (page: number = 1, page_size: number = 10): Promise<Note[]> => {
   const response = await fetch(`${BASE_URL}/api/notes?page=${page}&page_size=${page_size}`);
   if (!response.ok) {
     throw new Error('Failed to fetch notes');
   }
-  const data = await response.json();
-  return data as Note[];
+  return await response.json();
 };
 
 // Fetch a single note 
@@ -59,7 +58,7 @@ export const DeleteNote = async (id: number): Promise<void> => {
 };
 
 // Create a new note
-export const CreateNote = async (note: Note): Promise<number> => {
+export const CreateNote = async (note: Omit<Note, 'id' | 'created_at' | 'updated_at' | 'slug'>): Promise<number> => {
   const response = await fetch(`${BASE_URL}/api/notes`, {
     method: 'POST',
     headers: {
@@ -71,7 +70,25 @@ export const CreateNote = async (note: Note): Promise<number> => {
     throw new Error('Failed to create note');
   }
   const data = await response.json();
-  return data.id as number;
+  return data.id;
+};
+
+// Get replies for a note
+export const FetchNoteReplies = async (noteId: number): Promise<Note[]> => {
+  const response = await fetch(`${BASE_URL}/api/notes/${noteId}/replies`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch replies');
+  }
+  return await response.json();
+};
+
+// Get note Parent tree
+export const FetchNoteParent = async (noteId: number): Promise<Note> => {
+  const response = await fetch(`${BASE_URL}/api/notes/${noteId}/parent`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch parent tree');
+  }
+  return await response.json();
 };
 
 // Search notes

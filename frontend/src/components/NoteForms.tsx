@@ -15,6 +15,8 @@ function NoteForms(props: NoteFormProps) {
     tags: '',
     created_at: '',
     updated_at: '',
+    slug: '',
+    thread_id: null,
   };
 
   const [note, setNote] = useState<Note>(initialNote);

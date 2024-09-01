@@ -5,9 +5,10 @@ import { Modal, Button, ButtonGroup, Toast, ToastContainer } from 'react-bootstr
 import MDEditor from '@uiw/react-md-editor';
 import styled from 'styled-components';
 
-import { DeleteNote, EditNote } from '../api';
+import { DeleteNote, EditNote, FetchNoteParent } from '../api';
 import { Note } from '../constants/NoteType';
 import { UseFetchNote } from '../components/UseFetchNote';
+import NoteCard from '../components/NoteCard';
 
 // Styled components
 const Container = styled.div`
@@ -73,6 +74,7 @@ const NotePage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { note, setNote, loading, error } = UseFetchNote(Number(id));
+  const [expandedReplies, setExpandedReplies] = useState(false);
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [editorState, setEditorState] = useState({
@@ -80,22 +82,45 @@ const NotePage: React.FC = () => {
     preview: 'edit' as 'edit' | 'live' | 'preview',
   });
   const [toast, setToast] = useState({ show: false, message: '', variant: 'success' });
+
+  // Check if note has replies and display the replies in the sidcebar if yes 
+
+  const [parentTree, setParentTree] = useState<Note | null>(null);
+
   useEffect(() => {
     if (note) {
       setEditorState(prev => ({ ...prev, content: note.content }));
       // document.title = `Note: ${note.title.slice(0, 20)}`;
+      setParentTree(null);
+      const loadParentTree = async () => {
+        const noteParentTree = await FetchNoteParent(Number(id));
+        setParentTree(noteParentTree);
+      }
+
+      loadParentTree();
+      if (parentTree == null) {
+        <div>No parent tree</div>
+      } else {
+        <div className="list">
+          <NoteCard note={parentTree} onReplyAdded={onReplyAdded} />
+        </div>
+      }
+
       if (note.title) {
         const truncatedTitle = note.title.length > 20 ? note.title.slice(0, 20) : note.title;
         document.title = `Note: ${truncatedTitle}`;
       }
     }
   }, [note]);
+
+
+
   const showToast = (message: string, variant: 'success' | 'danger') => {
     setToast({ show: true, message, variant });
   };
+
   const handleSave = useCallback(async () => {
     if (!note) return;
-
     const updatedNote: Note = { ...note, content: editorState.content };
     try {
       await EditNote(updatedNote);
@@ -109,11 +134,9 @@ const NotePage: React.FC = () => {
 
   const handleDelete = useCallback(async () => {
     if (!note) return;
-
     try {
       await DeleteNote(note.id);
       showToast('Note deleted successfully!', 'success');
-
       // Delay navigation to allow toast to be visible
       setTimeout(() => {
         navigate('/');
@@ -127,8 +150,59 @@ const NotePage: React.FC = () => {
   if (loading) return <Container>Loading...</Container>;
   if (error) return <Container>Error: {error}</Container>;
   if (!note) return <Container>Note not found</Container>;
-
   const tagsArray = note.tags.split(/[, ]+/).map(tag => tag.trim()).filter(tag => tag.length > 0);
+
+  const onReplyAdded = () => { }
+  const renderReplies = () => {
+    {
+      note.replies ? note.replies.map(reply => (
+        <NoteCard key={reply.id} note={reply} onReplyAdded={onReplyAdded} />
+      )) : <div>No replies yet</div>
+    }
+    if (note.replies && note.replies.length > 0) {
+      return note.replies.map(reply => (
+        <NoteCard key={reply.id} note={reply} onReplyAdded={onReplyAdded} />
+      ));
+    } else {
+      return <div>No replies yet</div>;
+    }
+  }
+
+
+  // const renderReplies = () => {
+  //   if (note.replies) {
+  //     const displayedReplies = showAllReplies ? note.replies : [note.replies[0]];
+  //     return (
+  //       <>
+  //         {displayedReplies.map(reply => (
+  //           <NoteCard key={reply.id} note={reply} onReplyAdded={onReplyAdded} />
+  //         ))}
+  //         {note.replies.length > 1 && (
+  //           <Button
+  //             variant="link"
+  //             onClick={() => setShowAllReplies(!showAllReplies)}
+  //           >
+  //             {showAllReplies ? 'Hide' : 'Show'} {note.replies.length - 1} more {note.replies.length - 1 === 1 ? 'reply' : 'replies'}
+  //           </Button>
+  //         )}
+  //       </>
+  //     );
+  //   } else {
+  //     return <div>No replies yet</div>;
+  //   }
+  // }
+  const renderParentTree = () => {
+
+    if (!!!parentTree || parentTree == null) {
+      return <div>No parent tree</div>;
+    } else {
+      return (
+        <div className="list">
+          <NoteCard note={parentTree} onReplyAdded={onReplyAdded} />
+        </div>
+      );
+    }
+  };
 
   return (
     <Container>
@@ -178,6 +252,40 @@ const NotePage: React.FC = () => {
         preview={editorState.preview}
         height={400}
       />
+
+      {/* See 1) note replies 2) Note parent tree */}
+      <div className="container">
+        <div className="row">
+          <h4>Replies</h4>
+          {/* {renderReplies()} */}
+          {note.replies && note.replies.length > 0 && (
+            <>
+              {note.replies.length > 1 && (
+                <div className="d-inline">
+                  {/* <div className="d-flex justify-content-end mt-2"> */}
+
+                  <Button
+                    variant="outline-info" size="sm"
+                    onClick={() => setExpandedReplies(!expandedReplies)}
+                  >
+                    {expandedReplies ? 'Show less' : `Show ${note.replies.length - 1} more replies`}
+                  </Button>
+                </div>
+              )}
+              {expandedReplies
+                ? renderReplies()
+                : (() => {
+                  const result = renderReplies();
+                  return Array.isArray(result) ? result.slice(0, 1) : result;
+                })()
+              }
+            </>
+          )}
+          {(!note.replies || note.replies.length === 0) && renderReplies()}
+          <h4>Parent Tree</h4>
+          {renderParentTree()}
+        </div>
+      </div>
 
       <Modal show={showDeleteConfirm} onHide={() => setShowDeleteConfirm(false)}>
         <Modal.Header closeButton>

@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import Filter from '../components/Filter';
 import NoteCardContainer from '../components/NoteCardContainer';
 import { FetchNotes, FetchTotalNotes } from '../api';
@@ -81,6 +81,18 @@ const Home = () => {
     };
   }, [showModal]);
 
+  const refreshNotes = useCallback(async () => {
+    setError(null);
+    try {
+      const notesData = await FetchNotes(page, page_size);
+      setNotes(notesData);
+      const data = await FetchTotalNotes();
+      setTotalNotes(data.count);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      setError(errorMessage);
+    }
+  }, [page, page_size]);
 
   return (
     <Fragment>
@@ -115,6 +127,7 @@ const Home = () => {
         totalNotes={total}
         notes={notes}
         error={error}
+        onReplyAdded={refreshNotes}
       />
     </Fragment>
   );

@@ -27,19 +27,33 @@ class NoteOut(Schema):
     updated_at: datetime
     tags: str
     slug: str
-    is_root: bool
-    reply_count: int
+    # is_reply: bool
+    # parent_id: Optional[int]
+    replies: List["NoteOut"] = []
+
+
+NoteOut.model_rebuild()
 
 
 class NotePagination(PageNumberPagination):
     page_size = 10
 
 
-# Create note
-@api.post("/notes")
-def create_note(request: HttpRequest, payload: NoteIn) -> dict[str, int]:
-    note: Note = Note.objects.create(**payload.dict())
-    return {"id": note.id}
+# # Create note
+# @api.post("/notes")
+# def create_note(request: HttpRequest, payload: NoteIn) -> dict[str, int]:
+#     note: Note = Note.objects.create(**payload.dict())
+#     return {"id": note.id}
+# Update the create_note and update_note functions
+@api.post("/notes", response=NoteOut)
+def create_note(request: HttpRequest, payload: NoteIn) -> Note:
+    thread = None
+    if payload.thread_id:
+        thread = get_object_or_404(Note, id=payload.thread_id)
+
+    note_data = payload.dict(exclude={"thread_id"})
+    note = Note.objects.create(**note_data, thread=thread)
+    return note
 
 
 # Get note by ID
@@ -51,13 +65,31 @@ def get_note(request: HttpRequest, note_id: int) -> Note:
 
 # List notes with pagination
 @api.get("/notes", response=List[NoteOut])
-def list_notes(
-    request: HttpRequest, page: int = 1, page_size: int = 10
-) -> BaseManager[Note]:
-    qs: BaseManager[Note] = Note.objects.all()
+def list_notes(request: HttpRequest, page: int = 1, page_size: int = 10) -> List[Note]:
+    qs: BaseManager[Note] = Note.objects.filter(thread__isnull=True)  # Only root notes
     start = (page - 1) * page_size
     end = start + page_size
-    return qs[start:end]
+    return list(qs[start:end])
+
+
+# Get replies to a note
+@api.get("/notes/{note_id}/replies", response=List[NoteOut])
+def get_note_replies(request: HttpRequest, note_id: int) -> List[Note]:
+    note: Note = get_object_or_404(Note, id=note_id)
+    return list(note.replies.all())
+
+
+# @api.get("/notes/{note_id}/siblings", response=List[NoteOut])
+# def get_sibling_notes(request: HttpRequest, note_id: int) -> List[Note]:
+#     note: Note = get_object_or_404(Note, id=note_id)
+#     return list(Note.objects.filter(note.thread))
+
+
+# Get parent note
+@api.get("/notes/{note_id}/parent", response=NoteOut)
+def get_parent_note(request: HttpRequest, note_id: int) -> Optional[Note]:
+    note: Note = get_object_or_404(Note, id=note_id)
+    return note.thread
 
 
 # Get number of database entries in notes

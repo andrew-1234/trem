@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+from django.db.models.query import QuerySet
 
 
 class BaseModel(models.Model):
@@ -19,10 +20,12 @@ class Note(BaseModel):
         "self", null=True, blank=True, related_name="replies", on_delete=models.CASCADE
     )
 
+    replies: QuerySet["Note"]
+
     def __str__(self):
         return self.title
 
-    def is_root_note(self):
+    def is_root_note(self) -> bool:
         return self.thread is None
 
     def save(self, *args, **kwargs) -> None:  # type: ignore
