@@ -9,6 +9,7 @@ import { DeleteNote, EditNote, FetchNoteParent } from '../api';
 import { Note } from '../constants/NoteType';
 import { UseFetchNote } from '../components/UseFetchNote';
 import NoteCard from '../components/NoteCard';
+import rehypeSanitize from 'rehype-sanitize';
 
 // Styled components
 const Container = styled.div`
@@ -250,6 +251,9 @@ const NotePage: React.FC = () => {
         value={editorState.content}
         onChange={(value) => setEditorState(prev => ({ ...prev, content: value || '' }))}
         preview={editorState.preview}
+        previewOptions={{
+          rehypePlugins: [[rehypeSanitize]],
+        }}
         height={400}
       />
 
