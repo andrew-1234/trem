@@ -1,98 +1,57 @@
-import { Fragment, useCallback, useEffect, useState } from 'react';
+// src/pages/Home.tsx
+
+import React, { Fragment, useEffect, useState, useCallback } from 'react';
 import Filter from '../components/Filter';
 import NoteCardContainer from '../components/NoteCardContainer';
-import { FetchNotes, FetchTotalNotes } from '../api';
 import { Note } from '../constants/NoteType';
 import { HomePagination } from '../components/HomePagination';
-// import { Link } from 'react-router-dom';
 import { FaSquarePlus } from 'react-icons/fa6';
-// import { NoteRoutes } from '../constants/NoteRoutes';
 import AddNotePage from './AddNotePage';
+import { useNotes } from '../contexts/NotesContext';
+import { Spinner } from 'react-bootstrap';
 
-const Home = () => {
-  const [total, setTotalNotes] = useState<number>(0);
+const Home: React.FC = () => {
+  const { notes, totalNotes, loading, error, fetchNotes } = useNotes();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Note[]>([]);
   const [page, setPage] = useState(1);
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const page_size = 10; // Set the number of notes per page
-
-
-  useEffect(() => {
-    const getTotalNotes = async () => {
-      setError(null);
-      try {
-        const data = await FetchTotalNotes();
-        setTotalNotes(data.count);
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-        setError(errorMessage);
-      }
-    };
-
-    getTotalNotes();
-  }, []);
-
-  useEffect(() => {
-    const loadNotes = async () => {
-      setError(null);
-      try {
-        if (!searchQuery) {
-          const notesData = await FetchNotes(page, page_size);
-          setNotes(notesData);
-        } else if (searchResults !== notes) {
-          // Update notes when search results change, even if empty
-          setNotes(searchResults);
-        }
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-        setError(errorMessage);
-      }
-    };
-
-    loadNotes();
-  }, [page, searchQuery, searchResults]);
-
-  const page_count = searchQuery
-    ? Math.ceil(searchResults.length / page_size)
-    : Math.ceil(total / page_size);
-
-  useEffect(() => {
-    document.title = 'Home';
-  }, []);
   const [showModal, setShowModal] = useState(false);
+  const page_size = 10;
 
-  const openModal = () => setShowModal(true);
-  const closeModal = () => setShowModal(false);
+  useEffect(() => {
+    fetchNotes(page, page_size);
+    console.log("total notes: ", totalNotes);
+  }, [page, fetchNotes]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {  // Check if the Esc key was pressed
-        closeModal();
+      if (event.key === 'Escape') {
+        setShowModal(false);
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
-
-    // Clean up the event listener when the component is unmounted or when showModal changes
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [showModal]);
+  }, []);
 
-  const refreshNotes = useCallback(async () => {
-    setError(null);
-    try {
-      const notesData = await FetchNotes(page, page_size);
-      setNotes(notesData);
-      const data = await FetchTotalNotes();
-      setTotalNotes(data.count);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      setError(errorMessage);
-    }
-  }, [page, page_size]);
+  useEffect(() => {
+    document.title = 'Home';
+  }, []);
+
+  const openModal = () => setShowModal(true);
+  const closeModal = () => setShowModal(false);
+
+  const refreshNotes = useCallback(() => {
+    fetchNotes(page, page_size);
+  }, [page, page_size, fetchNotes]);
+
+  const page_count = searchQuery
+    ? Math.ceil(searchResults.length / page_size)
+    : Math.ceil(totalNotes / page_size);
+
+  const displayedNotes = searchQuery ? searchResults : notes;
 
   return (
     <Fragment>
@@ -112,9 +71,7 @@ const Home = () => {
               <FaSquarePlus /> Add Notes
             </button>
 
-            {(showModal &&
-              <AddNotePage onClose={closeModal} />
-            )}
+            {showModal && <AddNotePage onClose={closeModal} />}
           </div>
         </div>
         <HomePagination
@@ -123,12 +80,26 @@ const Home = () => {
           currentPage={page}
         />
       </div>
-      <NoteCardContainer
-        totalNotes={total}
-        notes={notes}
-        error={error}
-        onReplyAdded={refreshNotes}
-      />
+      {loading ? (
+        <div className="text-center mt-4">
+          <Spinner animation="border" variant="primary">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        </div>
+      ) : error ? (
+        <div className="alert alert-danger mt-4" role="alert">
+          {error}
+        </div>
+      ) : displayedNotes.length > 0 ? (
+        <NoteCardContainer
+          totalNotes={totalNotes}
+          notes={displayedNotes}
+          error={null}
+          onReplyAdded={refreshNotes}
+        />
+      ) : (
+        <div className="text-center mt-4">No notes found</div>
+      )}
     </Fragment>
   );
 };

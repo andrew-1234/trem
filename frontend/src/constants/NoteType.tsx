@@ -8,4 +8,5 @@ export interface Note {
   slug: string;
   thread_id: number | null;
   replies?: Note[];
+  is_root_note: boolean;
 }
