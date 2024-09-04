@@ -8,27 +8,29 @@ import NoteEditor from '../components/NoteEditor';
 import NoteReplies from '../components/NoteReplies';
 import DeleteNoteModal from '../components/DeleteNoteModal';
 import styled from 'styled-components';
-import { Button, Spinner } from 'react-bootstrap';
+import { Spinner, Tabs, Tab } from 'react-bootstrap';
 import { Note } from '../constants/NoteType';
 import { useSpinDelay } from 'spin-delay';
 import { FetchNoteParent } from '../api';
 import ParentTree from '../components/ParentTree';
 
-const Container = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-`;
-
-const Header = styled.div`
+const PageContainer = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+  height: 100vh;
 `;
 
-const Title = styled.h1`
-  margin: 0;
+const MainContent = styled.div`
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+`;
+
+const SidePanel = styled.div`
+  width: 350px;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-left: 1px solid #dee2e6;
+  overflow-y: auto;
 `;
 
 const NotePage: React.FC = () => {
@@ -97,46 +99,48 @@ const NotePage: React.FC = () => {
 
   if (showSpinner) {
     return (
-      <Container>
+      <MainContent>
         <div className="text-center mt-4">
           <Spinner animation="border" variant="primary">
             <span className="visually-hidden">Loading...</span>
           </Spinner>
         </div>
-      </Container>
+      </MainContent>
     )
   }
 
-  if (error) return <Container>Error: {error}</Container>;
+  if (error) return <MainContent>Error: {error}</MainContent>;
   if (!note) return null;
 
   return (
-    <Container>
-      <Header>
-        <Title>{note.title}</Title>
-        <Button variant="primary" size="sm" onClick={() => navigate(-1)}>
-          Back
-        </Button>
-      </Header>
-      <NoteMetadata
-        note={note}
-        onSave={handleTagSave}
-      />
-      <NoteEditor
-        initialContent={note.content}
-        onSave={handleSave}
-        onDelete={() => setShowDeleteConfirm(true)}
-      />
-      {note && <NoteReplies note={note} />}
-      {note && <ParentTree note={note} />}
-      <DeleteNoteModal
-        show={showDeleteConfirm}
-        onClose={() => setShowDeleteConfirm(false)}
-        onConfirm={handleDelete}
-      />
-      <div>
-      </div>
-    </Container >
+    <PageContainer>
+      <MainContent>
+        <NoteEditor
+          initialContent={note.content}
+          title={note.title}
+          onSave={handleSave}
+          onDelete={() => setShowDeleteConfirm(true)}
+        />
+        <DeleteNoteModal
+          show={showDeleteConfirm}
+          onClose={() => setShowDeleteConfirm(false)}
+          onConfirm={handleDelete}
+        />
+      </MainContent>
+      <SidePanel>
+        <Tabs defaultActiveKey="metadata" id="side-panel-tabs">
+          <Tab eventKey="metadata" title="Metadata">
+            <NoteMetadata note={note} onSave={handleTagSave} />
+          </Tab>
+          <Tab eventKey="parentTree" title="Parent Tree">
+            {note && <ParentTree note={note} />}
+          </Tab>
+          <Tab eventKey="replies" title="Replies">
+            {note && <NoteReplies note={note} />}
+          </Tab>
+        </Tabs>
+      </SidePanel>
+    </PageContainer>
   );
 };
 

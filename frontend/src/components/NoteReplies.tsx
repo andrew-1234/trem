@@ -2,10 +2,17 @@ import React, { useState } from 'react';
 import NoteCard from './NoteCard';
 import { Button } from 'react-bootstrap';
 import { Note } from '../constants/NoteType';
+import styled from 'styled-components';
 
 interface NoteRepliesProps {
   note: Note;
 }
+
+const Metadata = styled.div`
+  // padding: 10px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+`;
 
 const NoteReplies: React.FC<NoteRepliesProps> = ({ note }) => {
   const [expandedReplies, setExpandedReplies] = useState(false);
@@ -23,8 +30,7 @@ const NoteReplies: React.FC<NoteRepliesProps> = ({ note }) => {
   };
 
   return (
-    <div>
-      <h4>Replies</h4>
+    <Metadata>
       {replies.length > 1 && (
         <Button
           variant="outline-info"
@@ -42,7 +48,7 @@ const NoteReplies: React.FC<NoteRepliesProps> = ({ note }) => {
           return Array.isArray(result) ? result.slice(0, 1) : result;
         })()
       }
-    </div>
+    </Metadata>
   );
 };
 

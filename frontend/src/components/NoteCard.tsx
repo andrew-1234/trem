@@ -17,15 +17,14 @@ const StyledNoteCard = styled.div`
   background-color: ${props => props.color};
 `;
 
-// Add a styled component for the NoteCard that changes background color based
-// on the color prop
 const NoteCard: React.FC<NoteCardProps> = ({ note, color, depth = 0, onReplyAdded }) => {
   const [showReplies, setShowReplies] = useState(false);
   const [showReplyForm, setShowReplyForm] = useState(false);
   const tagsArray = note.tags.split(/[, ]+/).map(tag => tag.trim()).filter(tag => tag.length > 0);
   const { id } = useParams();
   return (
-    <div className={`single-note-item ${depth > 0 ? 'reply' : ''}`} style={{ marginLeft: `${depth * 20}px` }}>
+    // <div className={`single-note-item ${depth > 0 ? 'reply' : ''}`} style={{ marginLeft: `${depth * 20}px` }}>
+    <div className={`single-note-item ${depth > 0 ? 'reply' : ''}`} >
       <StyledNoteCard color={color} className='card card-body mb-1'>
         {/* <div className={`card card-body ${color ? 'currentCard' : ''} mb-3`}> */}
         <Link to={NoteRoutes.NOTE_INFO(note.id.toString())} style={{ textDecoration: 'none' }}>

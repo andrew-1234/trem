@@ -3,6 +3,13 @@ import NoteCard from './NoteCard';
 import { Note } from '../constants/NoteType';
 import { FetchNoteParent } from '../api';
 import AsyncWrapper from './AsyncWrapper';
+import styled from 'styled-components';
+
+const Metadata = styled.div`
+  // padding: 10px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+`;
 
 interface ParentTreeProps {
   note: Note;
@@ -45,12 +52,11 @@ const ParentTree: React.FC<ParentTreeProps> = ({ note }) => {
       errorComponent={(error: string) => <div className="text-danger">Error loading parent tree: {error}</div>}
     >
       {parentTree && (
-        <div>
-          <h4>Parent Tree</h4>
+        <Metadata>
           <div className="list">
             <NoteCard note={parentTree} onReplyAdded={() => { }} />
           </div>
-        </div>
+        </Metadata>
       )}
     </AsyncWrapper>
   );

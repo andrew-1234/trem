@@ -7,6 +7,7 @@ const Metadata = styled.div`
   border: 1px solid #5938df;
   padding: 10px;
   margin-bottom: 20px;
+  margin-top: 20px;
   border-radius: 5px;
 `;
 
