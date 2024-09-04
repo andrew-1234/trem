@@ -45,7 +45,6 @@ $theme-colors: map-merge($theme-colors, (
     margin: 0px;
     padding: 5px 100px 0px 100px;
     border-radius: 10px;
-
   }
  }
 
@@ -115,7 +114,6 @@ form {
   }
   
   .search-bar {
-    // width: 50%;
     height: auto;
   }
 
@@ -155,6 +153,7 @@ form {
     }
   }
 }
+
 div.single-note-item.reply {
   padding: 0px;
   margin: 0px 0px 0px 0px;

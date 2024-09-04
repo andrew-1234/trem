@@ -66,6 +66,7 @@ const NoteMetadata: React.FC<NoteMetadataProps> = ({ note, onSave }) => {
     <Metadata>
       <div>Created: {new Date(note.created_at).toLocaleString()}</div>
       <div>Updated: {new Date(note.updated_at).toLocaleString()}</div>
+      <div>Number of replies: {note.replies ? note.replies.length : 0}</div>
       <TagsContainer>
         Tags:
         {isEditing ? (
