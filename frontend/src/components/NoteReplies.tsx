@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
-import { useNotes } from '../contexts/NotesContext';
 import NoteCard from './NoteCard';
 import { Button } from 'react-bootstrap';
+import { Note } from '../constants/NoteType';
 
 interface NoteRepliesProps {
-  noteId: number;
+  note: Note;
 }
 
-const NoteReplies: React.FC<NoteRepliesProps> = ({ noteId }) => {
-  const { notes } = useNotes();
+const NoteReplies: React.FC<NoteRepliesProps> = ({ note }) => {
   const [expandedReplies, setExpandedReplies] = useState(false);
 
-  const note = notes.find(n => n.id === noteId);
   const replies = note?.replies || [];
 
   const renderReplies = () => {
