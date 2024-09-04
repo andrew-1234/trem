@@ -47,8 +47,10 @@ const NotePage: React.FC = () => {
         try {
           const fetchedNote = await fetchNoteById(Number(id));
           setNote(fetchedNote);
-          const noteParentTree = await FetchNoteParent(Number(id));
-          setParentTree(noteParentTree);
+          if (note?.is_root_note) {
+            const noteParentTree = await FetchNoteParent(Number(id));
+            setParentTree(noteParentTree);
+          }
         } catch (err) {
           console.error('Error fetching note:', err);
         }
@@ -102,7 +104,6 @@ const NotePage: React.FC = () => {
 
   const onReplyAdded = () => { }
   const renderParentTree = () => {
-
     if (!!!parentTree || parentTree == null) {
       return <div>No parent tree</div>;
     } else {

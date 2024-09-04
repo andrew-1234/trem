@@ -99,7 +99,7 @@ def get_parent_note(request: HttpRequest, note_id: int) -> Optional[Note]:
 # Get number of database entries in notes
 @api.get("/count")
 def count_notes(request: HttpRequest):
-    count: int = Note.objects.count()
+    count: int = Note.objects.filter(thread__isnull=True).count()
     return {"count": count}
 
 
