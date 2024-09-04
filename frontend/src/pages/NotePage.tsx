@@ -11,8 +11,8 @@ import styled from 'styled-components';
 import { Button, Spinner } from 'react-bootstrap';
 import { Note } from '../constants/NoteType';
 import { useSpinDelay } from 'spin-delay';
-import NoteCard from '../components/NoteCard';
 import { FetchNoteParent } from '../api';
+import ParentTree from '../components/ParentTree';
 
 const Container = styled.div`
   max-width: 800px;
@@ -36,21 +36,16 @@ const NotePage: React.FC = () => {
   const { fetchNoteById, updateNote, deleteNote, loading, error } = useNotes();
   const [note, setNote] = useState<Note | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [parentTree, setParentTree] = useState<Note | null>(null);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const loadNote = async () => {
-      setParentTree(null);
       if (id) {
         try {
           const fetchedNote = await fetchNoteById(Number(id));
           setNote(fetchedNote);
-          if (note?.is_root_note) {
-            const noteParentTree = await FetchNoteParent(Number(id));
-            setParentTree(noteParentTree);
-          }
+
         } catch (err) {
           console.error('Error fetching note:', err);
         }
@@ -58,13 +53,26 @@ const NotePage: React.FC = () => {
     };
 
     loadNote();
-  }, [id, fetchNoteById]);
+  }, [id, fetchNoteById, FetchNoteParent]);
 
 
   const handleSave = useCallback(async (updatedContent: string) => {
     if (note) {
       try {
         const updatedNote = { ...note, content: updatedContent };
+        await updateNote(updatedNote);
+        setNote(updatedNote); // Update local state
+        console.log('Note updated successfully');
+      } catch (error) {
+        console.error('Failed to update note:', error);
+      }
+    }
+  }, [note, updateNote]);
+
+  const handleTagSave = useCallback(async (updatedTags: string) => {
+    if (note) {
+      try {
+        const updatedNote = { ...note, tags: updatedTags };
         await updateNote(updatedNote);
         setNote(updatedNote); // Update local state
         console.log('Note updated successfully');
@@ -85,7 +93,7 @@ const NotePage: React.FC = () => {
     }
   }, [note, deleteNote, navigate]);
 
-  const showSpinner = useSpinDelay(loading, { delay: 500, minDuration: 200 });
+  const showSpinner = useSpinDelay(loading, { delay: 300, minDuration: 200 });
 
   if (showSpinner) {
     return (
@@ -102,19 +110,6 @@ const NotePage: React.FC = () => {
   if (error) return <Container>Error: {error}</Container>;
   if (!note) return null;
 
-  const onReplyAdded = () => { }
-  const renderParentTree = () => {
-    if (!!!parentTree || parentTree == null) {
-      return <div>No parent tree</div>;
-    } else {
-      return (
-        <div className="list">
-          <NoteCard note={parentTree} onReplyAdded={onReplyAdded} />
-        </div>
-      );
-    }
-  };
-
   return (
     <Container>
       <Header>
@@ -123,21 +118,23 @@ const NotePage: React.FC = () => {
           Back
         </Button>
       </Header>
-      <NoteMetadata note={note} />
+      <NoteMetadata
+        note={note}
+        onSave={handleTagSave}
+      />
       <NoteEditor
         initialContent={note.content}
         onSave={handleSave}
         onDelete={() => setShowDeleteConfirm(true)}
       />
-      <NoteReplies noteId={note.id} />
+      {note && <NoteReplies note={note} />}
+      {note && <ParentTree note={note} />}
       <DeleteNoteModal
         show={showDeleteConfirm}
         onClose={() => setShowDeleteConfirm(false)}
         onConfirm={handleDelete}
       />
       <div>
-        <h4>Parent Tree</h4>
-        {renderParentTree()}
       </div>
     </Container >
   );
