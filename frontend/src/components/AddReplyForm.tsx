@@ -19,6 +19,7 @@ const ReplyForm: React.FC<ReplyFormProps> = ({ parentNoteId, onReplyAdded }) => 
         content,
         tags,
         thread_id: parentNoteId,
+        is_root_note: false,
       });
       setTitle('');
       setContent('');
