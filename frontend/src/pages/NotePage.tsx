@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useNotes } from '../contexts/NotesContext';
 import NoteMetadata from '../components/NoteMetadata';
@@ -31,6 +31,22 @@ const NotePage: React.FC = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = React.useState(false);
+
+  const renderCount = useRef(0);
+
+  useEffect(() => {
+    renderCount.current += 1;
+    console.log('NotePage rendered', {
+      noteId: note?.id,
+      renderCount: renderCount.current
+    });
+  });
+
+  const handleSubMenuToggle = useCallback((open: boolean) => {
+    console.log('Replies submenu', open ? 'opened' : 'closed');
+  }, []);
+
+
   useEffect(() => {
     const loadNote = async () => {
       if (id) {
@@ -44,6 +60,7 @@ const NotePage: React.FC = () => {
     };
 
     loadNote();
+
   }, [id, fetchNoteById]);
 
   const handleSave = useCallback(async (updatedContent: string) => {
@@ -117,12 +134,19 @@ const NotePage: React.FC = () => {
               <MenuItem component={<NoteMetadata note={note} onSave={handleTagSave} />} >
               </MenuItem>
             </SubMenu>
-            <SubMenu label="Replies">
-              <MenuItem component={<NoteReplies note={note} />} >
-              </MenuItem>
+            <SubMenu label="Replies" onOpenChange={handleSubMenuToggle}>
+              {note && note.replies && note.replies.length > 0
+                ? <MenuItem component={<NoteReplies note={note} />}></MenuItem>
+                : <div>No replies</div>
+              }
             </SubMenu>
             <SubMenu label="Parent Tree">
               <MenuItem component={<ParentTree note={note} />} >
+              </MenuItem>
+            </SubMenu>
+            <SubMenu label="Hello">
+              <MenuItem >
+                Hello
               </MenuItem>
             </SubMenu>
           </Menu>
