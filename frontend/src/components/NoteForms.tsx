@@ -1,56 +1,56 @@
 import React, { useState } from 'react';
 import { Note } from '../constants/NoteType';
 
+type NoteFormData = Omit<Note, 'id' | 'created_at' | 'updated_at' | 'slug'>;
+
 interface NoteFormProps {
-  onSubmit: (note: Note) => void;
+  onSubmit: (note: NoteFormData) => void;
   passedNote?: Note;
 }
 
-function NoteForms(props: NoteFormProps) {
-  // If passed note is provided, use it as initial state
-  const initialNote = props.passedNote ? props.passedNote : {
-    id: 0,
+function NoteForms({ onSubmit, passedNote }: NoteFormProps) {
+  const initialNote: NoteFormData = passedNote ? {
+    title: passedNote.title,
+    content: passedNote.content,
+    tags: passedNote.tags,
+    thread_id: passedNote.thread_id,
+    is_root_note: passedNote.is_root_note,
+  } : {
     title: '',
     content: '',
     tags: '',
-    created_at: '',
-    updated_at: '',
-    slug: '',
     thread_id: null,
+    is_root_note: true,
   };
 
-  const [note, setNote] = useState<Note>(initialNote);
+  const [note, setNote] = useState<NoteFormData>(initialNote);
 
-  // Set state when form input changes
   function handleChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    var { name, value } = event.target;
-    setNote({
-      ...note,
+    const { name, value } = event.target;
+    setNote(prevNote => ({
+      ...prevNote,
       [name]: value
-    })
+    }));
   }
 
-  // Handle form submission event using the passed onSubmit prop
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    if (note.tags && note.tags.length > 0) {
-      // If note has tags, check if the values are comma separated
-      // If not, convert to comma separated
-      var value = note.tags
-      note.tags = value.split(/[, ]+/).map(tag => tag.trim()).filter(tag => tag.length > 0).join(', ')
-    }
-
-    props.onSubmit(note);
+    const submittedNote = {
+      ...note,
+      tags: note.tags
+        .split(/[, ]+/)
+        .map(tag => tag.trim())
+        .filter(tag => tag.length > 0)
+        .join(', ')
+    };
+    onSubmit(submittedNote);
   }
 
   return (
     <div className="container col-6">
       <form onSubmit={handleSubmit}>
+        <h1 style={{ textAlign: 'center' }}>{passedNote ? 'Edit Note' : 'Create a Note'}</h1>
 
-        {/* Container Header */}
-        <h1 style={{ textAlign: 'center' }} >{note.id ? 'Edit Note' : 'Create a Note'}</h1>
-
-        {/* Title form*/}
         <div className="mb-3">
           <label className="form-label">Title</label>
           <input
@@ -59,10 +59,10 @@ function NoteForms(props: NoteFormProps) {
             value={note.title}
             name="title"
             onChange={handleChange}
-          ></input>
+            required
+          />
         </div>
 
-        {/* Content form */}
         <div className="mb-3">
           <label className="form-label">Content</label>
           <textarea
@@ -72,10 +72,10 @@ function NoteForms(props: NoteFormProps) {
             name="content"
             onChange={handleChange}
             rows={10}
-          ></textarea>
+            required
+          />
         </div>
 
-        {/* Tags form */}
         <div className="mb-3">
           <label className="form-label">Tags</label>
           <small id="optional" className="form-text text-muted float-end">Optional</small>
@@ -85,20 +85,19 @@ function NoteForms(props: NoteFormProps) {
             value={note.tags}
             name="tags"
             onChange={handleChange}
-          ></input>
+          />
         </div>
 
-
-        {/* Submit button */}
         <button
           className="btn btn-primary d-flex justify-content-center mt-3"
           style={{ width: "100%" }}
+          type="submit"
         >
-          {note.id ? 'Save Note' : 'Add Note'}
+          {passedNote ? 'Save Note' : 'Add Note'}
         </button>
       </form>
     </div>
-  )
+  );
 }
 
-export default NoteForms
+export default NoteForms;

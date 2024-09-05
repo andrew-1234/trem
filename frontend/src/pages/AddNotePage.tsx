@@ -1,37 +1,8 @@
-// import { useEffect } from 'react'
-// import { CreateNote } from '../api'
-// import NoteForms from '../components/NoteForms'
-// import { Note } from '../constants/NoteType'
-// import { useNavigate } from 'react-router-dom'
-
-// function AddNotePage() {
-
-//   const navigate = useNavigate()
-//   useEffect(() => {
-//     document.title = 'Add Note'
-//   })
-//   const submitNote = async (note: Note) => {
-//     try {
-//       const createdNoteID = await CreateNote(note);
-//       console.log('Note created:', createdNoteID);
-//       navigate(`/note/${createdNoteID}`);
-//     } catch (error) {
-//       console.error('Error creating note:', error);
-//     }
-//   }
-//   return (
-//     <div>
-//       <NoteForms onSubmit={submitNote} />
-//     </div>
-//   )
-// }
-
-// export default AddNotePage
 import { useEffect } from 'react';
-import { CreateNote } from '../api';
+// import { useNavigate } from 'react-router-dom';
+import { useNotes } from '../contexts/NotesContext';
 import NoteForms from '../components/NoteForms';
 import { Note } from '../constants/NoteType';
-import { useNavigate } from 'react-router-dom';
 import Modal from '../components/Modal';
 
 interface AddNotePageProps {
@@ -39,19 +10,21 @@ interface AddNotePageProps {
 }
 
 function AddNotePage({ onClose }: AddNotePageProps) {
-
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
+  const { addNote } = useNotes();
 
   useEffect(() => {
     document.title = 'Add Note';
   }, []);
 
-  const submitNote = async (note: Note) => {
+  const submitNote = async (note: Omit<Note, 'id' | 'created_at' | 'updated_at' | 'slug'>) => {
     try {
-      const createdNoteID = await CreateNote(note);
+      const createdNoteID = await addNote(note);
       console.log('Note created:', createdNoteID);
-      navigate(`/note/${createdNoteID}`);
+      // navigate(`/note/${createdNoteID}`);
+      onClose(); // Close the modal after successful creation
     } catch (error) {
+      // Error handling is now done in the context
       console.error('Error creating note:', error);
     }
   };
@@ -61,7 +34,6 @@ function AddNotePage({ onClose }: AddNotePageProps) {
       <div className="container">
         <NoteForms onSubmit={submitNote} />
       </div>
-
     </Modal>
   );
 }
