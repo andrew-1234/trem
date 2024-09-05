@@ -144,11 +144,6 @@ const NotePage: React.FC = () => {
               <MenuItem component={<ParentTree note={note} />} >
               </MenuItem>
             </SubMenu>
-            <SubMenu label="Hello">
-              <MenuItem >
-                Hello
-              </MenuItem>
-            </SubMenu>
           </Menu>
         </Sidebar>
         <MainContent>
