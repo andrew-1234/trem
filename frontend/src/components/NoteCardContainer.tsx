@@ -1,5 +1,6 @@
 import NoteCard from "./NoteCard";
 import { Note } from "../constants/NoteType";
+import { useNotes } from "../contexts/NotesContext";
 
 interface NoteCardContainerProps {
   totalNotes: number;
@@ -24,8 +25,9 @@ const NoteCardContainer = ({
     tags: "inbox get-started",
     slug: "",
     thread_id: null,
+    is_root_note: true,
   };
-
+  const { deleteNote } = useNotes();
   const renderContent = () => {
     if (error) {
       return <div>Error: {error}</div>;
@@ -39,7 +41,7 @@ const NoteCardContainer = ({
     }
     return notes.map((note) => (
       <div key={note.id} className="list">
-        <NoteCard note={note} onReplyAdded={onReplyAdded} />
+        <NoteCard note={note} onReplyAdded={onReplyAdded} onDelete={deleteNote} showDeleteButton={true} />
       </div>
     ));
   };
