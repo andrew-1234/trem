@@ -4,15 +4,19 @@ import { Button } from 'react-bootstrap';
 import { Note } from '../constants/NoteType';
 import styled from 'styled-components';
 
-interface NoteRepliesProps {
-  note: Note;
-}
-
 const Metadata = styled.div`
   // padding: 10px;
   margin-bottom: 20px;
   margin-top: 20px;
 `;
+const Styled = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+interface NoteRepliesProps {
+  note: Note;
+}
 
 const NoteReplies: React.FC<NoteRepliesProps> = ({ note }) => {
   const [expandedReplies, setExpandedReplies] = useState(false);
@@ -21,7 +25,7 @@ const NoteReplies: React.FC<NoteRepliesProps> = ({ note }) => {
 
   const renderReplies = () => {
     if (replies.length === 0) {
-      return <div>No replies yet</div>;
+      return <Styled>No replies yet</Styled>;
     }
 
     return replies.map(reply => (
